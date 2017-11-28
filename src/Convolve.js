@@ -8,17 +8,21 @@ img.setPixels(boats_pixels);
 
 // ##### TESTING PART #####
 const isKernelSeparable = kernel => {
-    //kernelArray.forEach(element => element.forEach(unit => console.log(unit)));
+    // check if the kernel used is separable
 };
 
 const displayKernel = kernel => kernel.forEach(element => element.forEach(unit => console.log(unit)));
 
 const splitKernel = kernel => {
     let tmpKernel = kernel.split("\n").map(x => x.split(" "));
+    let finalKernel = tmpKernel.reduce((accu, x) => accu.concat(x), []);
+    let sumKernel = finalKernel.reduce((accu, x) => parseInt(x) + accu, 0);
     return {
-        kernel : tmpKernel,
+        kernel : finalKernel.map(x => parseInt(x)),
         width : tmpKernel[0].length,
         height : tmpKernel.length,
+        sum : sumKernel,
+        size : finalKernel.length
     };
 };
 
@@ -28,46 +32,52 @@ const copyImage = image => {
     return img;
 };
 
-const fillEdgesWithBlack = (image, kWidth, kHeight) => {
-    // create new raster for the image
-    let newRaster = new T.Raster(image.type, image.width, image.height);
-    let pixels = image.raster.pixelData;
-    
-    let extraWidth = kWidth / 2;
-    let extraHeight = kHeight / 2;
-    let colorToFill = image.type == 
+// const fillEdgesWithBlack = (image, kWidth, kHeight) => {    
+// };
 
-    // fill the top and bottom of the array with black pixels
-    pixels.unshift(new Array(extraHeight).fill(0));
-    pixels.push(new Array(extraWidth).fill(0));
-
-    //image processing
-    let pixelArrayOfImage = image.getRaster();
-    
-};
 const convolve = (kernel, image, copy = true) => {
-    
+    // by default the convolution will start at (kw/2, kh/2)
+
+    // if copy -> create an image copy and process it else -> use the given image directly
     let img = copy ? copyImage(image) : image;
     
     // Reformat kernel from string to object
     kernel = splitKernel(kernel);
 
-    // filling image edges with black pixels in order to allow convolution
-    img = fillEdgesWithBlack(img, kernel.width, kernel.height);
+    // getting image raster and pixel data
+    let imgPixelData = img.getRaster().pixelData;
+    let tmp = imgPixelData;
 
-    // getting pixel data into an array
-    let pixelArrayOfImage = img.raster.pixelData;
+    // getting start/stop indexes for browsing image
+    let imgStartingIndex = (Math.floor(kernel.height / 2) * img.width) + Math.round(kernel.width / 2);
+    let imgStoppingIndex = imgPixelData.length - imgStartingIndex;
 
-    
-    
-    // splitting the kernel into an array
-    
+    console.log(`START : ${imgStartingIndex}\tSTOP : ${imgStoppingIndex}`);
+    console.log(`WIDTH : ${img.width}\tHEIGHT : ${img.height}`);
     // convolution
-    
+    for (let i = imgStartingIndex; i < imgStoppingIndex; i++){
+        let followingCounter = 0
+        let newValue = 0;
+        for (let j = 0; j < kernel.size; j++){
+            if (followingCounter === kernel.width){
+                followingCounter = 0;
+                i += (img.width-kernel.width);// - kernel.width);
+            }
+            newValue += kernel.kernel[j] * tmp[i];
+            followingCounter++;
+            i++;
+        }
+        if (isNaN(newValue)){break;}
+        imgPixelData[i + Math.round(kernel.size/2)] = Math.abs(newValue);
+        console.log(`i : ${i}\tOLD : ${tmp[i + Math.round(kernel.size/2)]}\tNEW : ${Math.abs(imgPixelData[i + Math.round(kernel.size/2)])}`);
+    }
+    img.pixelData = imgPixelData;
 };
 
-let kernel = "1 2 1\n-1 -2 -1\n1 2 1";
-// console.log(isKernelSeparable(kernel));
+// Create a kernel and split it in a 1D Array
+let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
+
+// convolution process
 convolve(kernel, img, false);
 
 //####################
