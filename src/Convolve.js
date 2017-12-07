@@ -39,39 +39,54 @@ const convolve = (kernel, image, copy = true) => {
     // by default the convolution will start at (kw/2, kh/2)
 
     // if copy -> create an image copy and process it else -> use the given image directly
-    let img = copy ? copyImage(image) : image;
+    // let img = copy ? copyImage(image) : image;
     
     // Reformat kernel from string to object
     kernel = splitKernel(kernel);
 
     // getting image raster and pixel data
-    let imgPixelData = img.getRaster().pixelData;
+    // let imgRaster = img.getRaster()
+    let imgPixelData = image.getRaster().pixelData;
     let tmp = imgPixelData;
 
-    // getting start/stop indexes for browsing image
-    let imgStartingIndex = (Math.floor(kernel.height / 2) * img.width) + Math.round(kernel.width / 2);
-    let imgStoppingIndex = imgPixelData.length - imgStartingIndex;
+    // console.log(imgRaster.getPixel(0,0), imgRaster.getPixel(1,0), imgRaster.getPixel(2,0), imgRaster.getPixel(0,1), imgRaster.getPixel(1,1), imgRaster.getPixel(1,2), imgRaster.getPixel(0,2), imgRaster.getPixel(1,2), imgRaster.getPixel(2,2));
 
-    console.log(`START : ${imgStartingIndex}\tSTOP : ${imgStoppingIndex}`);
-    console.log(`WIDTH : ${img.width}\tHEIGHT : ${img.height}`);
-    // convolution
-    for (let i = imgStartingIndex; i < imgStoppingIndex; i++){
-        let followingCounter = 0
-        let newValue = 0;
+    let imageStartPosition = Math.round(kernel.width / 2);
+    let imageStopPosition = imgPixelData.length - imageStartPosition;
+
+    let slideCount = 0;
+    let kernelCount = 1;
+    let tmpImagePosition = 0;
+    let tmpPixelValue = 0;
+    
+    for (let i = 0; i < imgPixelData.length; i++){
+        tmpImagePosition = i;
+        kernelCount = 1;
+        tmpPixelValue = 0;
         for (let j = 0; j < kernel.size; j++){
-            if (followingCounter === kernel.width){
-                followingCounter = 0;
-                i += (img.width-kernel.width);// - kernel.width);
+            tmpPixelValue += kernel.kernel[j] * imgPixelData[tmpImagePosition];
+            if (i === 0){
+                console.log(tmpImagePosition, imgPixelData[tmpImagePosition], tmpPixelValue);
             }
-            newValue += kernel.kernel[j] * tmp[i];
-            followingCounter++;
-            i++;
+
+            if (kernelCount === kernel.width){
+                kernelCount = 0;
+                tmpImagePosition += image.width - kernel.width;
+            }
+            
+            kernelCount++;
+            tmpImagePosition++;
         }
-        if (isNaN(newValue)){break;}
-        imgPixelData[i + Math.round(kernel.size/2)] = Math.abs(newValue);
-        console.log(`i : ${i}\tOLD : ${tmp[i + Math.round(kernel.size/2)]}\tNEW : ${Math.abs(imgPixelData[i + Math.round(kernel.size/2)])}`);
+
+        if (i === 0){
+            console.log(tmpPixelValue, Math.round(Math.abs(tmpPixelValue / kernel.size)));
+            console.log(Math.round(kernel.width / 2) + (Math.floor(kernel.height / 2) * image.width) + i -1 );
+        }
+        tmp[Math.round(kernel.width / 2) + (Math.round(kernel.height / 2) * image.width) + i - 1] = Math.floor(tmpPixelValue);
+        slideCount++; 
     }
-    img.pixelData = imgPixelData;
+
+    img.pixelData = tmp;
 };
 
 // Create a kernel and split it in a 1D Array
