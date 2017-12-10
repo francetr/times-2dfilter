@@ -1,9 +1,9 @@
 'use strict'
 
-// create a new empty image
-let img = new T.Image("uint8", 360, 288);
-// set pixels of the image (raster) to those in boats_pixels
-img.setPixels(boats_pixels);
+// // create a new empty image
+// let img = new T.Image("uint8", 360, 288);
+// // set pixels of the image (raster) to those in boats_pixels
+// img.setPixels(boats_pixels);
 
 
 // ##### TESTING PART #####
@@ -32,7 +32,7 @@ const copyImage = image => {
     return img;
 };
 
-// const fillEdgesWithBlack = (image, kWidth, kHeight) => {    
+// const fillEdgesWithBlack = (image, kWidth, kHeight) => {
 // };
 
 const convolve = (kernel, image, copy = true) => {
@@ -40,7 +40,7 @@ const convolve = (kernel, image, copy = true) => {
 
     // if copy -> create an image copy and process it else -> use the given image directly
     // let img = copy ? copyImage(image) : image;
-    
+
     // Reformat kernel from string to object
     kernel = splitKernel(kernel);
 
@@ -58,7 +58,7 @@ const convolve = (kernel, image, copy = true) => {
     let kernelCount = 1;
     let tmpImagePosition = 0;
     let tmpPixelValue = 0;
-    
+
     for (let i = 0; i < imgPixelData.length; i++){
         tmpImagePosition = i;
         kernelCount = 1;
@@ -73,7 +73,7 @@ const convolve = (kernel, image, copy = true) => {
                 kernelCount = 0;
                 tmpImagePosition += image.width - kernel.width;
             }
-            
+
             kernelCount++;
             tmpImagePosition++;
         }
@@ -83,7 +83,7 @@ const convolve = (kernel, image, copy = true) => {
             console.log(Math.round(kernel.width / 2) + (Math.floor(kernel.height / 2) * image.width) + i -1 );
         }
         tmp[Math.round(kernel.width / 2) + (Math.round(kernel.height / 2) * image.width) + i - 1] = Math.floor(tmpPixelValue);
-        slideCount++; 
+        slideCount++;
     }
 
     img.pixelData = tmp;
@@ -93,15 +93,15 @@ const convolve = (kernel, image, copy = true) => {
 let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
 // convolution process
-convolve(kernel, img, false);
+// convolve(kernel, img, false);
 
 //####################
 
-// create a new window 
-let win = new T.Window('Boats');
-// create a new view for the window
-let view = T.view(img.getRaster());
-// add view to the window
-win.addView(view);
-// add window to the DOM
-win.addToDOM("workspace");
+// // create a new window
+// let win = new T.Window('Boats');
+// // create a new view for the window
+// let view = T.view(img.getRaster());
+// // add view to the window
+// win.addView(view);
+// // add window to the DOM
+// win.addToDOM("workspace");
