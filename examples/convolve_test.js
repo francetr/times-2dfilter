@@ -9,9 +9,8 @@ img.setPixels(boats_pixels);
 // Create a kernel and split it in a 1D Array
 let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
-convolve(kernel, img)
-
-
+let result = convolve(kernel, img, true);
+img.raster = result;
 
 
 // create a new window
