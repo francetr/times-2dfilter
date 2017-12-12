@@ -1,16 +1,5 @@
 'use strict'
 
-// // create a new empty image
-// let img = new T.Image("uint8", 360, 288);
-// // set pixels of the image (raster) to those in boats_pixels
-// img.setPixels(boats_pixels);
-
-
-// ##### TESTING PART #####
-const isKernelSeparable = kernel => {
-    // check if the kernel used is separable
-};
-
 const displayKernel = kernel => kernel.forEach(element => element.forEach(unit => console.log(unit)));
 
 const splitKernel = kernel => {
@@ -24,84 +13,52 @@ const splitKernel = kernel => {
         sum : sumKernel,
         size : finalKernel.length
     };
-};
+}
 
-const copyImage = image => {
-    let img = new T.Image(image.type, image.width, image.height);
-    img.raster = image.raster;
-    return img;
-};
-
-// const fillEdgesWithBlack = (image, kWidth, kHeight) => {
-// };
+const deepcopy = o => JSON.parse(JSON.stringify(o));
 
 const convolve = (kernel, image, copy = true) => {
     // by default the convolution will start at (kw/2, kh/2)
+    let useKernel = splitKernel(kernel);
 
-    // if copy -> create an image copy and process it else -> use the given image directly
-    // let img = copy ? copyImage(image) : image;
+    let width = image.width;
+    let height = image.height;
 
-    // Reformat kernel from string to object
-    kernel = splitKernel(kernel);
+    let uc = Math.floor(useKernel.width / 2);
+    let vc = Math.floor(useKernel.height / 2);
 
-    // getting image raster and pixel data
-    // let imgRaster = img.getRaster()
-    let imgPixelData = image.getRaster().pixelData;
-    let tmp = imgPixelData;
+    let output = T.Raster.from(image.raster);
+    console.log(output.getPixel(12,1))
+    let pixels = deepcopy(output.pixelData);
 
-    // console.log(imgRaster.getPixel(0,0), imgRaster.getPixel(1,0), imgRaster.getPixel(2,0), imgRaster.getPixel(0,1), imgRaster.getPixel(1,1), imgRaster.getPixel(1,2), imgRaster.getPixel(0,2), imgRaster.getPixel(1,2), imgRaster.getPixel(2,2));
+    output.pixelData = output.pixelData.map(x => 0);
 
-    let imageStartPosition = Math.round(kernel.width / 2);
-    let imageStopPosition = imgPixelData.length - imageStartPosition;
+    let scale = useKernel.sum != 0 ? 1 / useKernel.sum : 1 / useKernel.size;
+    let sum = 0;
+    let i = 0;
+    let currentValue = 0;
 
-    let slideCount = 0;
-    let kernelCount = 1;
-    let tmpImagePosition = 0;
-    let tmpPixelValue = 0;
-
-    for (let i = 0; i < imgPixelData.length; i++){
-        tmpImagePosition = i;
-        kernelCount = 1;
-        tmpPixelValue = 0;
-        for (let j = 0; j < kernel.size; j++){
-            tmpPixelValue += kernel.kernel[j] * imgPixelData[tmpImagePosition];
-            if (i === 0){
-                console.log(tmpImagePosition, imgPixelData[tmpImagePosition], tmpPixelValue);
+    for (let y = vc; y < (height - vc); y++){
+        for (let x = uc; x < (width - uc); x++){
+            sum = 0;
+            i = 0;
+            for (let v = -vc; v <= vc; v++){
+                let offset = x + (y + v) * width;
+                for (let u = -uc; u <= uc; u++){
+                    let tmp = pixels[offset+u];
+                    sum += pixels[offset + u] * useKernel.kernel[i];
+                    i++;
+                    // if (y === vc){
+                    //     console.log(x, y, tmp, sum, currentValue);
+                    // }
+                }
             }
-
-            if (kernelCount === kernel.width){
-                kernelCount = 0;
-                tmpImagePosition += image.width - kernel.width;
+            currentValue = Math.round(sum * scale);
+            if (currentValue < 0){
+                currentValue = 0;
             }
-
-            kernelCount++;
-            tmpImagePosition++;
+            output.pixelData[x + y * width] = currentValue;
         }
-
-        if (i === 0){
-            console.log(tmpPixelValue, Math.round(Math.abs(tmpPixelValue / kernel.size)));
-            console.log(Math.round(kernel.width / 2) + (Math.floor(kernel.height / 2) * image.width) + i -1 );
-        }
-        tmp[Math.round(kernel.width / 2) + (Math.round(kernel.height / 2) * image.width) + i - 1] = Math.floor(tmpPixelValue);
-        slideCount++;
     }
-
-    img.pixelData = tmp;
-};
-
-// Create a kernel and split it in a 1D Array
-let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
-
-// convolution process
-// convolve(kernel, img, false);
-
-//####################
-
-// // create a new window
-// let win = new T.Window('Boats');
-// // create a new view for the window
-// let view = T.view(img.getRaster());
-// // add view to the window
-// win.addView(view);
-// // add window to the DOM
-// win.addToDOM("workspace");
+    return output;
+}
