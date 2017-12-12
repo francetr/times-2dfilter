@@ -43,34 +43,37 @@
  //  return output;
  // }
 
-
  const meanFilter = (kernel)=> (img, copy=true) => {
  let output = T.Raster.from(img, copy);
- img.pixelData.reduce((accu, value) => accu+value, output);
- // output = img.raster.pixelData.map((value)=> value);
- // output.type = img.type;
+
  let kh = kernel.height;
  let kw = kernel.width;
+
+ let h = img.height;
+ let w = img.width;
+
+ output.pixelData.forEach((pix, i)=>{
+  let sum = 0;
+  let x = i%w;
+  let y = Math.floor(i/w);
+  sum = pix;
+  sum += (x-1 >=0) ? img.pixelData[i-1] : 0.0;
+  sum += (y-1 >=0) ? img.pixelData[i-w] : 0.0;
+  sum += (x+1 >=0) ? img.pixelData[i+1] : 0.0;
+  sum += (y+1 >=0) ? img.pixelData[i+w] : 0.0;
+  sum += (x-1 >=0 && y-1 >=0) ? img.pixelData[i-1-w] : 0.0;
+  sum += (x+1 >=0 && y+1 >=0) ? img.pixelData[i+1+w] : 0.0;
+  sum += (x-1 >=0 && y+1 >=0) ? img.pixelData[i-1+w] : 0.0;
+  sum += (x+1 >=0 && y-1 >=0) ? img.pixelData[i+1-w] : 0.0;
+  output.pixelData[i] = (sum /= kernel.length);
+ });
 
 
  return output;
  }
 
-
-  /**
-   * Mean Calculation
-   *
-   * @param {TRaster} kernel - Convolution mask
-   * @return {int} - mean pixel value
-   *
-   * @author Tristan Frances
-   */
-   const mean = (kernel) => {
-    kernel.kernel.reduce((sum, value) => sum+value, 0)/kernel.length;
-   }
-
  /**
-  * Mean Calculation
+  * Creation of a kernal object
   *
   * @param {TRaster} kernel - Convolution mask
   * @return {splitKernel} - kernel object with five properties
