@@ -15,70 +15,50 @@ const splitKernel = kernel => {
     };
 }
 
+const deepcopy = o => JSON.parse(JSON.stringify(o));
+
 const convolve = (kernel, image, copy = true) => {
-    console.log("HELLO");
     // by default the convolution will start at (kw/2, kh/2)
-    kernel = splitKernel(kernel)
+    let useKernel = splitKernel(kernel);
+
     let width = image.width;
     let height = image.height;
-    let uc = Math.round(kernel.width / 2);
-    let vc = Math.round(kernel.height / 2);
-    console.log(image.raster.pixelData);
-    let pixels = image.raster.pixelData;
-    let pixels2 = T.Raster.from(image.raster);
 
-    for (let y = vc; y < height - vc; y++){
-        for (let x = uc; x < width - uc; x++){
-            let sum = 0;
-            let i = 0;
+    let uc = Math.floor(useKernel.width / 2);
+    let vc = Math.floor(useKernel.height / 2);
+
+    let output = T.Raster.from(image.raster);
+    console.log(output.getPixel(12,1))
+    let pixels = deepcopy(output.pixelData);
+
+    output.pixelData = output.pixelData.map(x => 0);
+
+    let scale = useKernel.sum != 0 ? 1 / useKernel.sum : 1 / useKernel.size;
+    let sum = 0;
+    let i = 0;
+    let currentValue = 0;
+
+    for (let y = vc; y < (height - vc); y++){
+        for (let x = uc; x < (width - uc); x++){
+            sum = 0;
+            i = 0;
             for (let v = -vc; v <= vc; v++){
                 let offset = x + (y + v) * width;
-                for (let u = -uc; u < uc; u++){
-                    sum += pixels2[offeset + u] * kernel[i++];
+                for (let u = -uc; u <= uc; u++){
+                    let tmp = pixels[offset+u];
+                    sum += pixels[offset + u] * useKernel.kernel[i];
+                    i++;
+                    // if (y === vc){
+                    //     console.log(x, y, tmp, sum, currentValue);
+                    // }
                 }
-            pixels[x + y + width] = sum / kernel.sum;
             }
+            currentValue = Math.round(sum * scale);
+            if (currentValue < 0){
+                currentValue = 0;
+            }
+            output.pixelData[x + y * width] = currentValue;
         }
     }
-    pixels2.pixelData = pixels;
-    return pixels2;
+    return output;
 }
-
-
-// const subConvolution = (kernel, imagePart) => {
-//     let value = 0;
-//     for (let k = 0; k < kernel.size; k++){
-//         value += kernel[k] * imagePart[k];
-//     }
-//     return value /= kernel.size;
-// }
-
-    // #####################
-
-    // let slideCount = 0;
-    // let kernelCount = 1;
-    // let tmpImagePosition = 0;
-    // let tmpPixelValue = 0;
-
-    // for (let i = 0; i < imgPixelData.length; i++){
-    //     tmpImagePosition = i;
-    //     kernelCount = 1;
-    //     tmpPixelValue = 0;
-    //     for (let j = 0; j < kernel.size; j++){
-    //         tmpPixelValue += kernel.kernel[j] * imgPixelData[tmpImagePosition];
-
-    //         if (kernelCount === kernel.width){
-    //             kernelCount = 0;
-    //             tmpImagePosition += image.width - kernel.width;
-    //         }
-
-    //         kernelCount++;
-    //         tmpImagePosition++;
-    //     }
-
-    //     output[Math.round(kernel.width / 2) + (Math.round(kernel.height / 2) * image.width) + i - 1] = Math.floor(tmpPixelValue);
-    //     slideCount++;
-    // }
-
-    // img.pixelData = output;
-};

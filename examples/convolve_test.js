@@ -7,11 +7,9 @@ img.setPixels(boats_pixels);
 // TESTING //
 
 // Create a kernel and split it in a 1D Array
-let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
-
+let kernel = "-1 -1 -1\n-1 24 -1\n-1 -1 -1";
 let result = convolve(kernel, img, true);
-img.raster = result;
-
+img.setPixels(result.pixelData);
 
 // create a new window
 let win = new T.Window('Boats');
