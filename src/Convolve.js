@@ -25,10 +25,7 @@ const normalizeKernel = kernel => {
 const convert = (x, from, to) => parseInt(x, from).toString(to);
 
 const convolve = (kernel) =>  (image, copy = true) => {
-    // the convolution will start at (kw/2, kh/2)
     let useKernel = splitKernel(kernel);
-    let height = image.height;
-
     let output = T.Raster.from(image.raster);
     let pixels = output.pixelData;
     output.pixelData = output.pixelData.map(x => 0.0);
@@ -57,7 +54,7 @@ const convolve = (kernel) =>  (image, copy = true) => {
     return output;
 }
 
-const convolve2 = (kernel) =>  (image, copy = true) => {
+// const convolve2 = (kernel) =>  (image, copy = true) => {
     //     // the convolution will start at (kw/2, kh/2)
     //     let useKernel = splitKernel(kernel);
     
