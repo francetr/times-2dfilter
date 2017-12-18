@@ -1,25 +1,25 @@
 // UINT8
 // create a new empty image
-let img = new T.Image("uint8", 360, 288);
-// set pixels of the image (raster) to those in boats_pixels
-img.setPixels(boats_pixels);
-// create a new window
-let win = new T.Window('Boats');
-// create a new view for the window
-let view = T.view(img.getRaster());
-// add view to the window
-win.addView(view);
-// add window to the DOM
-win.addToDOM("workspace");
+// let img = new T.Image("uint8", 360, 288);
+// // set pixels of the image (raster) to those in boats_pixels
+// img.setPixels(boats_pixels);
+// // create a new window
+// let win = new T.Window('Boats');
+// // create a new view for the window
+// let view = T.view(img.getRaster());
+// // add view to the window
+// win.addView(view);
+// // add window to the DOM
+// win.addToDOM("workspace");
 
 // UINT16
-// let img01 = new T.Image('uint16',256,254);
-// let uint16_blobs = blobs_pixels.map ( (px) => px * 256);
-// img01.setPixels(uint16_blobs);
-// let win01 = new T.Window('Blobs uint16');
-// let view01 = T.view(img01.getRaster());
-// win01.addView(view01);
-// win01.addToDOM('workspace');
+let img01 = new T.Image('uint16',256,254);
+let uint16_blobs = blobs_pixels.map ( (px) => px * 256);
+img01.setPixels(uint16_blobs);
+let win01 = new T.Window('Blobs uint16');
+let view01 = T.view(img01.getRaster());
+win01.addView(view01);
+win01.addToDOM('workspace');
 
 
 // FLOAT32
@@ -52,7 +52,7 @@ let workflow = T.pipe(
   meanFilter(kernel.kernel),
   T.view
 );
-let view2 = workflow(img.getRaster());
+let view2 = workflow(img01.getRaster());
 
 // let newImg = new T.Image("uint8", 360, 288);
 // let applyMean = meanFilter(kernel.kernel) (img.raster);
