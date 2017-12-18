@@ -1,6 +1,6 @@
 'use strict'
 
-const displayKernel = kernel => kernel.forEach(element => element.forEach(unit => console.log(unit)));
+// const displayKernel = kernel => kernel.forEach(element => element.forEach(unit => console.log(unit)));
 
 const splitKernel = kernel => {
     let tmpKernel = kernel.split("\n").map(x => x.split(" "));
@@ -17,9 +17,15 @@ const splitKernel = kernel => {
 
 const deepcopy = o => JSON.parse(JSON.stringify(o));
 
+const normalizeKernel = kernel => {
+    let maximum = Math.abs(Math.max.apply(Math, kernel.kernel));
+    kernel.kernel = kernel.kernel.map(x => x / maximum);
+}
+
 const convolve = (kernel, image, copy = true) => {
-    // by default the convolution will start at (kw/2, kh/2)
+    // the convolution will start at (kw/2, kh/2)
     let useKernel = splitKernel(kernel);
+    // normalizeKernel(useKernel);
 
     let width = image.width;
     let height = image.height;
@@ -28,12 +34,12 @@ const convolve = (kernel, image, copy = true) => {
     let vc = Math.floor(useKernel.height / 2);
 
     let output = T.Raster.from(image.raster);
-    console.log(output.getPixel(12,1))
-    let pixels = deepcopy(output.pixelData);
+    let pixels = output.pixelData;
 
     output.pixelData = output.pixelData.map(x => 0);
-
-    let scale = useKernel.sum != 0 ? 1 / useKernel.sum : 1 / useKernel.size;
+    
+    let scale = useKernel.sum != 0 ? 1.0 / useKernel.sum : 1.0;//1 / useKernel.size;
+    
     let sum = 0;
     let i = 0;
     let currentValue = 0;
@@ -48,9 +54,6 @@ const convolve = (kernel, image, copy = true) => {
                     let tmp = pixels[offset+u];
                     sum += pixels[offset + u] * useKernel.kernel[i];
                     i++;
-                    // if (y === vc){
-                    //     console.log(x, y, tmp, sum, currentValue);
-                    // }
                 }
             }
             currentValue = Math.round(sum * scale);
