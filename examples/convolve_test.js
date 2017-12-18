@@ -17,11 +17,11 @@ img3.setPixels(float_blobs);
 // Create a kernel
 // let kernel = "-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 24 -1 -1\n-1 -1 -1 -1 -1\n-1 -1 -1 -1 -1"
 // let kernel = "-1 -1 -1\n-1 7 -1\n-1 -1 -1";
-// let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
-let kernel = "1 1 1\n1 1 1\n1 1 1";
+let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
+// let kernel = "1 1 1\n1 1 1\n1 1 1";
 
 // let result = convolve(kernel, img3, true);
-let result = convolve2(kernel)(img3, true);
+let result = convolve(kernel)(img3, true);
 img3.setPixels(result.pixelData);
 
 // create a new window
