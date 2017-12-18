@@ -64,7 +64,6 @@ const convolve = (kernel, image, copy = true) => {
                 }
             }
             currentValue = image.type == "float32" ? sum * scale : Math.round(sum * scale);
-            console.log(currentValue);
             if (currentValue < 0){
                 currentValue = 0;
             }
@@ -72,6 +71,6 @@ const convolve = (kernel, image, copy = true) => {
         }
     }
     // output.pixelData = image.type == "float32" ? output.pixelData.map(x => convert(x, 10, 16)) : output.pixelData;
-    // console.log(output.pixelData);
+    console.log(output.pixelData);
     return output;
 }
