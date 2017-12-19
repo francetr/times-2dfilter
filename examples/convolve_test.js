@@ -21,13 +21,13 @@ let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 // let kernel = "1 1 1\n1 1 1\n1 1 1";
 
 // let result = convolve(kernel, img3, true);
-let result = convolve(kernel)(img3, true);
-img3.setPixels(result.pixelData);
+let result = convolve(kernel)(img, true);
+img.setPixels(result.pixelData);
 
 // create a new window
 let win = new T.Window('Boats');
 // create a new view for the window
-let view = T.view(img3.getRaster());
+let view = T.view(img.getRaster());
 // add view to the window
 win.addView(view);
 // add window to the DOM
