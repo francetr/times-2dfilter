@@ -21,9 +21,8 @@ let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 // let kernel = "1 1 1\n1 1 1\n1 1 1";
 
 // let result = convolve(kernel, img3, true);
-// let result = convolve(kernel)(img, true);
-let result = gaussBlur(kernel, img, true);
-console.log(result.pixelData);
+let result = convolve(kernel)(img, true);
+// let result = gaussBlur(kernel, img, true);
 img.setPixels(result.pixelData);
 
 // create a new window
