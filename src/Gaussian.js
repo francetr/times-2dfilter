@@ -31,10 +31,40 @@
   * @param {boolean} copy - Copy mode to manage memory usage
   * @return {TRaster} - Filtered Image
   *
-  * @author TODO
+  * @author Bouchentouf Gary
   */
+  
  const gaussBlur = (kernel) => (img,copy=true) => {
-   let ouput =  TRaster.from(img,copy);
-   // TODO
-   return output;
- }
+    convolve(kernel)(image, copy);
+    return output;
+ };
+
+
+const kernelDetermination = (width, height) => {
+    let kw = width;
+    let kh = height;
+    let sigma = kw * kh;
+
+    let string = "";
+    
+    for (let x = 0; x < width; x++){
+        for (let y = 0; y < height; y++){
+            let denominator = 2.0 * Math.PI * Math.pow(sigma, 2.0);
+            let expo = (Math.pow(x, 2.0) + Math.pow(y, 2.0)) / 2.0 * Math.pow(sigma, 2.0);
+
+            let token = (1 / denominator) * Math.exp(- expo);
+            // console.log(token);
+            
+            string += " " + token.toString();
+        }
+    }
+    console.log(string);
+}
+
+// MAIN //
+
+
+
+
+
+ 
