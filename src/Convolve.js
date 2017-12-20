@@ -2,10 +2,10 @@
 
 const splitKernel = kernel => {
     let splittedKernel = kernel.split("\n").map(x => x.split(" ")).filter(x => x.length != 1);
-    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []);
+    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []).filter(x => x != "");
     return {
         kernel : reducedKernel.map(x => parseFloat(x)),
-        width : splittedKernel[0].length,
+        width : splittedKernel[0].filter(x => x != "").length,
         height : splittedKernel.length,
         sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
     };
