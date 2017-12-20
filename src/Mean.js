@@ -44,29 +44,29 @@
  // }
 
  const meanFilter = (kernel)=> (img, copy=true) => {
- let output = T.Raster.from(img, copy);
+    let output = T.Raster.from(img, copy);
 
- let kh = kernel.height;
- let kw = kernel.width;
+    let kh = kernel.height;
+    let kw = kernel.width;
 
- let h = img.height;
- let w = img.width;
+    let h = img.height;
+    let w = img.width;
 
- output.pixelData.forEach((pix, i)=>{
-  let sum = 0;
-  let x = i%w;
-  let y = Math.floor(i/w);
-  sum = pix;
-  sum += (x-1 >=0) ? img.pixelData[i-1] : 0.0;
-  sum += (y-1 >=0) ? img.pixelData[i-w] : 0.0;
-  sum += (x+1 >=0) ? img.pixelData[i+1] : 0.0;
-  sum += (y+1 >=0) ? img.pixelData[i+w] : 0.0;
-  sum += (x-1 >=0 && y-1 >=0) ? img.pixelData[i-1-w] : 0.0;
-  sum += (x+1 >=0 && y+1 >=0) ? img.pixelData[i+1+w] : 0.0;
-  sum += (x-1 >=0 && y+1 >=0) ? img.pixelData[i-1+w] : 0.0;
-  sum += (x+1 >=0 && y-1 >=0) ? img.pixelData[i+1-w] : 0.0;
-  output.pixelData[i] = (sum /= kernel.length);
- });
+    output.pixelData.forEach((pix, i)=>{
+    let sum = 0;
+    let x = i%w;
+    let y = Math.floor(i/w);
+    sum = pix;
+    sum += (x-1 >=0) ? img.pixelData[i-1] : 0.0;
+    sum += (y-1 >=0) ? img.pixelData[i-w] : 0.0;
+    sum += (x+1 >=0) ? img.pixelData[i+1] : 0.0;
+    sum += (y+1 >=0) ? img.pixelData[i+w] : 0.0;
+    sum += (x-1 >=0 && y-1 >=0) ? img.pixelData[i-1-w] : 0.0;
+    sum += (x+1 >=0 && y+1 >=0) ? img.pixelData[i+1+w] : 0.0;
+    sum += (x-1 >=0 && y+1 >=0) ? img.pixelData[i-1+w] : 0.0;
+    sum += (x+1 >=0 && y-1 >=0) ? img.pixelData[i+1-w] : 0.0;
+    output.pixelData[i] = (sum /= kernel.length);
+});
 
 
  return output;
