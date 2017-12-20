@@ -18,12 +18,10 @@ const normalizeKernel = kernel => {
 
 const convolve = (kernel) =>  (image, copy = true) => {
     let useKernel = splitKernel(kernel);
-    console.log(useKernel);
     let output = T.Raster.from(image.raster);
     let pixels = output.pixelData;
     output.pixelData = output.pixelData.map(x => 0.0);
     let scale = useKernel.sum != 0 ? 1.0 / useKernel.sum : 1.0;
-
     for (let y = Math.floor(useKernel.height / 2); y < (image.height - Math.floor(useKernel.height / 2)); y++){
         for (let x = Math.floor(useKernel.width / 2); x < (image.width - Math.floor(useKernel.width / 2)); x++){
             let sum = 0;

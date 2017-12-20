@@ -8,9 +8,9 @@ img.setPixels(boats_pixels);
 // let uint16Boats = boats_pixels.map(x => x*256);
 // img2.setPixels(uint16Boats);
 
-// let img3 = new T.Image('float32',256,254);
+// let img = new T.Image('float32',256,254);
 // let float_blobs = blobs_pixels.map( (px) => px/128 - 1.0);
-// img3.setPixels(float_blobs);
+// img.setPixels(float_blobs);
 
 // TESTING //
 
@@ -22,7 +22,7 @@ let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
 // let result = convolve(kernel, img3, true);
 // let result = convolve(kernel)(img, true);
-let result = gaussBlur(kernel, img, true);
+let result = gaussBlur(9, 1, img, true);
 img.setPixels(result.pixelData);
 
 // create a new window

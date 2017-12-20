@@ -33,20 +33,12 @@
   *
   * @author Bouchentouf Gary
   */
-  
-const gaussBlur = (kernel, image, copie = true) => convolve(gaussianTerms(9, 1))(image, true);
 
-const gaussian = (x, sigma) => Math.exp(-x * x / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI);
+// const gaussBlur = (kernel, image, copie = true) => convolve(gaussianTerms(9, 1))(image, true);
 
-const gaussianTerms = (kernelSize, sigma) => {
-    let terms = new Array(kernelSize * kernelSize).fill(0).map((x, i) => gaussian(i - kernelSize / 2, sigma));
-    return terms.reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", "");
-}
+// const gaussian = (x, sigma) => Math.exp(-x * x / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI);
 
-// MAIN //
+// const gaussianTerms = (kernelSize, sigma) => new Array(kernelSize * kernelSize).fill(0).map((x, i) => gaussian(i - kernelSize / 2, sigma)).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", "");
 
+const gaussBlur = (kernelSize, sigma, image, copy = true) => convolve(new Array(kernelSize * kernelSize).fill(0).map((x, i) => Math.exp(-(i - kernelSize / 2) * (i - kernelSize / 2 / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI))).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", ""))(image, copy);
 
-
-
-
- 
