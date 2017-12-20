@@ -63,9 +63,9 @@ const gaussianTerms = (kernelSize, sigma) => {
             tmp += "\n" + plop[j].toString();
             continue;
         }
-        tmp += plop[j].toString() + " ";
+        tmp += " " + plop[j].toString();
     }
-    console.log(tmp);
+    console.log(tmp);    console.log(tmp);
     return tmp;
     
 }
