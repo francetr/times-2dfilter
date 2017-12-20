@@ -156,7 +156,7 @@ const benchmark = (operation, img_ref) =>{
   }else if (operation === "gaussian") {
     while ( r <10) {
       let start = new Date().getMilliseconds();
-      let img_res = gaussBlur()(img_ref, true);
+      let img_res = gaussBlur(9, 2.0)(img_ref, true);
       // img_tmp.setPixels(img_res.pixelData);
       let stop = new Date().getMilliseconds();
       let bench = stop-start;
