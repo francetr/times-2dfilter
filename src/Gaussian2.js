@@ -34,31 +34,32 @@
   * @author Bouchentouf Gary
   */
   
- const gaussBlur = (kernel) => (img,copy=true) => {
-    convolve(kernel)(image, copy);
-    return output;
+ const gaussBlur = (kernel, image, copie = true) => {
+     let output = convolve(gaussianTerms(9, 1), image, true);
+     return output;
  };
 
 
-const kernelDetermination = (sigma) => {
-    // let kw = width;
-    // let kh = height;
-    // let sigma = kw * kh;
+const gaussian = (x, sigma) => {
+  let c = 2.0 * Math.pow(sigma, 2.0);
+  return Math.exp(-x * x / c) / Math.sqrt(c * Math.PI);
 
-    let string = "";
-    
-    for (let x = 0; x < sigma; x++){
-        // for (let y = 0; y < height; y++){
-            let d = Math.sqrt(2.0 * Math.PI * (Math.pow(sigma, 2.0)));
-            let expo = Math.pow(x, 2.0) / (2.0 * (Math.pow(sigma, 2.0)));
+}
 
-            // let token = Math.ceil((1 / denominator) * Math.exp(- expo));
-            let token = d / Math.exp(- expo);
-            // console.log(token);
-            
-            string += " " + token.toString();
+const gaussianTerms = (kernalsize, sigma) => {
+    let terms = [kernalsize];
+    let tmp = "";
+    for (let i = 0; i <= kernalsize; i++){
+        terms[i] = gaussian(i - kernalsize / 2, sigma);
+        if (i % 3 === 0){
+            tmp += "\n";
+        }
+        tmp += " " + terms[i].toString();
+        
     }
-    console.log(string);
+    console.log(tmp);
+    return tmp;
+    
 }
 
 // MAIN //
