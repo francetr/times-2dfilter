@@ -56,7 +56,7 @@ FUNCTION convolve(kernel)(image, copy = true):
         sum = 0
         # going through the kernel
         FOR v FROM (-kernel_height / 2) TO (kernel_heigth / 2):
-            # jumping to next pixel line of the image 
+            # jumping to next pixel line of the image
             offset = x + (y + v) * image_width
             FOR u FROM (-kernel_width / 2) TO (kernel_width / 2):
                 # adding computed value to a variable sum
@@ -106,6 +106,17 @@ For example if S<sub>xy</sub> represents the set of coordinates in a rectangular
 
 This operation can be implemented using a convolution mask in which all coefficients have a value of *1/(kw x kh)* with *kw* and *kh* respectively the kernel's width and height. A mean filter simply smoothes local variations in an image. Noise is reduced as a result of blurring. The main problem of this filter is that noisy pixels (including anomalous spikes) are weighted the same as all the other pixels in the kernel. <sup>[10]</sup>
 Because it uses a convolution kernel, we find the same issue as describe in section *1.2 Convolve*, thus the same solutions can be applied here for the edges of the picture.
+
+The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the kernel (previously defined) in parameter see Figure X
+
+```
+FUNCTION meanFilter(kernel)(image, copy=true)
+return convolve(kernel) (image)
+END FUNCTION
+```
+**Figure X** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
+
+Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation involve that the kernel as to be well written before the mean filter is instantiated.
 
 During our research, we did not find any plugins performing mean filter in a different way than the one implemented in ImageJ software. That is why the benchmarking were realised only with the mean filter already implemented in ImageJ.
 
