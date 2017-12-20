@@ -34,43 +34,13 @@
   * @author Bouchentouf Gary
   */
   
- const gaussBlur = (kernel, image, copie = true) => {
-     let output = convolve(gaussianTerms(9, 1))(image, true);
-     console.log(output);
-     return output;
- };
+const gaussBlur = (kernel, image, copie = true) => convolve(gaussianTerms(9, 1))(image, true);
 
-
-const gaussian = (x, sigma) => {
-  let c = 2.0 * Math.pow(sigma, 2.0);
-  return Math.exp(-x * x / c) / Math.sqrt(c * Math.PI);
-
-}
+const gaussian = (x, sigma) => Math.exp(-x * x / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI);
 
 const gaussianTerms = (kernelSize, sigma) => {
     let terms = new Array(kernelSize * kernelSize).fill(0).map((x, i) => gaussian(i - kernelSize / 2, sigma));
-    console.log(terms);
-
-    let result = terms.reduce((acc, x, i) => {
-        return acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ";
-    }, "");
-
-    console.log("RESULTS : ", result);
-
-    let tmp = "";
-
-    let test = terms.slice(0, Math.round(kernelSize / 2));
-    let plop = test.concat(test.slice(0, test.length - 1).reverse())
-
-    for (let j = 0; j < plop.length; j++){
-        if (j % 3 === 0){
-            tmp += "\n"// + plop[j].toString();
-            // continue;
-        }
-        tmp += plop[j].toString() + " ";
-    }
-    return result;
-    
+    return terms.reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", "");
 }
 
 // MAIN //
