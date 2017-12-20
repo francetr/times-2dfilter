@@ -16,7 +16,7 @@ const normalizeKernel = kernel => {
     kernel.kernel = kernel.kernel.map(x => x / maximum);
 }
 
-const convolve = (kernel) =>  (image, copy = true) => {
+const convolve = (kernel) => (image, copy = true) => {
     let useKernel = splitKernel(kernel);
     let output = T.Raster.from(image.raster);
     let pixels = output.pixelData;

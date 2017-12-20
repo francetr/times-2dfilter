@@ -40,5 +40,4 @@
 
 // const gaussianTerms = (kernelSize, sigma) => new Array(kernelSize * kernelSize).fill(0).map((x, i) => gaussian(i - kernelSize / 2, sigma)).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", "");
 
-const gaussBlur = (kernelSize, sigma, image, copy = true) => convolve(new Array(kernelSize * kernelSize).fill(0).map((x, i) => Math.exp(-(i - kernelSize / 2) * (i - kernelSize / 2 / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI))).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", ""))(image, copy);
-
+const gaussBlur = (kernelSize, sigma) => (image, copy = true) => convolve(new Array(kernelSize * kernelSize).fill(0).map((x, i) => Math.exp(-(i - kernelSize / 2) * (i - kernelSize / 2 / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI))).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", ""))(image, copy);

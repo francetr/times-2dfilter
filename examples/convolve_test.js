@@ -22,7 +22,7 @@ let kernel = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
 // let result = convolve(kernel, img3, true);
 // let result = convolve(kernel)(img, true);
-let result = gaussBlur(9, 1, img, true);
+let result = gaussBlur(9, 1)(img, true);
 img.setPixels(result.pixelData);
 
 // create a new window
