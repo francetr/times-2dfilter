@@ -35,7 +35,8 @@
   */
   
  const gaussBlur = (kernel, image, copie = true) => {
-     let output = convolve(gaussianTerms(9, 1), image, true);
+     let output = convolve(gaussianTerms(9, 1))(image, true);
+     console.log(output);
      return output;
  };
 
@@ -46,16 +47,26 @@ const gaussian = (x, sigma) => {
 
 }
 
-const gaussianTerms = (kernalsize, sigma) => {
-    let terms = [kernalsize];
+const gaussianTerms = (kernelSize, sigma) => {
+    let terms = [kernelSize];
     let tmp = "";
-    for (let i = 0; i <= kernalsize; i++){
-        terms[i] = gaussian(i - kernalsize / 2, sigma);
-        if (i % 3 === 0){
-            tmp += "\n";
+
+    for (let i = 0; i <= kernelSize; i++){
+
+        terms[i] = gaussian(i - kernelSize / 2, sigma);
+        // tmp += terms[i].toString() + " ";
+
+    }
+    let test = terms.slice(0, Math.round(kernelSize / 2));
+    
+    let plop = test.concat(test.slice(0, test.length - 1).reverse())
+
+    for (let j = 0; j < plop.length; j++){
+        if (j % 3 === 0){
+            tmp += "\n" + plop[j].toString();
+            continue;
         }
-        tmp += " " + terms[i].toString();
-        
+        tmp += plop[j].toString() + " ";
     }
     console.log(tmp);
     return tmp;

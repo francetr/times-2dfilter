@@ -4,10 +4,10 @@ const splitKernel = kernel => {
     let splittedKernel = kernel.split("\n").map(x => x.split(" "));
     let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []);
     return {
-        kernel : reducedKernel.map(x => parseInt(x)),
+        kernel : reducedKernel.map(x => parseFloat(x)),
         width : splittedKernel[0].length,
         height : splittedKernel.length,
-        sum : reducedKernel.reduce((accu, x) => parseInt(x) + accu, 0),
+        sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
     };
 }
 

@@ -6,6 +6,7 @@ img.setPixels(boats_pixels);
 
 // create a new window
 let win = new T.Window('Boats');
+gaussBlur()
 // create a new view for the window
 let view = T.view(img.getRaster());
 // add view to the window
