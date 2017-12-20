@@ -44,10 +44,10 @@ win.addToDOM("workspace");
 /*
 * Apply the mean filter on the image
 */
-let kernel="1 1 1\n1 1 1\n1 1 1";
-// kernel = splitKernel(kernel);
-let result = meanFilter(kernel)(img, true);
-img.setPixels(result.pixelData);
+// let kernel="1 1 1\n1 1 1\n1 1 1";
+// // kernel = splitKernel(kernel);
+// let result = meanFilter(kernel)(img, true);
+// img.setPixels(result.pixelData);
 
 // let workflow = T.pipe(
 //   meanFilter(kernel),
@@ -72,39 +72,101 @@ win2.addToDOM("workspace");
 // win_tmp.addToDOM("workspace");
 
 // let res_uint8 = [];
-let r =0
 
-
-"360", "280"
+/**
+  * Function to proceed the benchmark
+  *
+  * @param {String} type - String of the type of image available
+  * @param {Integer} width - Width of the image to process
+  * @param {Integer} height - height of the image to process
+  * @return {Array} - Array conataining a set of different images with different size
+  *
+  * @author Tristan Frances
+ */
 const newImages=(type, width, height)=>{
-  for (let i = 0; i < width*1000; i+=100) {
-    for (let j = 0; i < height*1000; j+=100) {
-      if (type === "uint8") {
-        let img = new T.Image("uint8", 360, 288);
-      };
+  let tabImg=[];
+  let img;
+
+  for (let i = 0; i < width * 25; i+=250){
+    if (type === "uint8") {
+      img = new T.Image(type, i+width, i+height);
       img.setPixels(boats_pixels);
-
-    };
-  };
-
-
-}
-
-
-const benchmark = (img_ref, st) =>{
-  let r = 0;
-  while ( r <10) {
-    let start = new Date().getMilliseconds();
-    let img_res = meanFilter(kernel)(img_ref, true);
-    // img_tmp.setPixels(img_res.pixelData);
-    let stop = new Date().getMilliseconds();
-    let bench = stop-start;
-    if (bench <0) {
-      bench=0;
     }
-    bench =bench.toString();
-    st = st.concat(bench).concat(",");
-    r++;
+    else if (type === "uint16") {
+      img = new T.Image(type, i+width, i+height);
+      img.setPixels(boats_pixels.map((px)=>px*256));
+    }
+    else if (type == "float32") {
+      img = new T.Image(type, i+width, i+height);
+      img.setPixels(boats_pixels.map((px) => px/128 - 1.0));
+    }
+
+    tabImg.push(img);
+  }
+
+  return tabImg;
+}
+// newImages("uint8", 360, 280);
+// newImages('uint16', 360, 280);
+let tmpp= newImages('float32', 360, 280);
+console.log(tmpp[5].raster.pixelData.length);
+
+/**
+  * Function to proceed the benchmark
+  *
+  * @param {String} operation - String of the type of operations
+  * @param {TRaster} img_ref - Input image to process
+  * @return {String} - String of the time processed for each time the operation has been launched
+  *
+  * @author Tristan Frances
+ */
+const benchmark = (operation, img_ref) =>{
+  let st =""
+  let r = 0;
+  let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
+  let kernel="1 1 1\n1 1 1\n1 1 1";
+  if (operation === "convolve") {
+    while ( r <10) {
+      let start = new Date().getMilliseconds();
+      let img_res = meanFilter(kernelConvolve)(img_ref, true);
+      // img_tmp.setPixels(img_res.pixelData);
+      let stop = new Date().getMilliseconds();
+      let bench = stop-start;
+      if (bench <0) {
+        bench=0;
+      }
+      bench =bench.toString();
+      st = st.concat(bench).concat(",");
+      r++;
+    }
+  }else if (operation === "mean") {
+    while ( r <10) {
+      let start = new Date().getMilliseconds();
+      let img_res = meanFilter(kernel)(img_ref, true);
+      // img_tmp.setPixels(img_res.pixelData);
+      let stop = new Date().getMilliseconds();
+      let bench = stop-start;
+      if (bench <0) {
+        bench=0;
+      }
+      bench =bench.toString();
+      st = st.concat(bench).concat(",");
+      r++;
+    }
+  }else if (operation === "gaussian") {
+    while ( r <10) {
+      let start = new Date().getMilliseconds();
+      let img_res = gaussBlur()(img_ref, true);
+      // img_tmp.setPixels(img_res.pixelData);
+      let stop = new Date().getMilliseconds();
+      let bench = stop-start;
+      if (bench <0) {
+        bench=0;
+      }
+      bench =bench.toString();
+      st = st.concat(bench).concat(",");
+      r++;
+    }
   }
   return st;
 }
@@ -112,24 +174,34 @@ const benchmark = (img_ref, st) =>{
 /**
  * Function to download a csv file
  *
- * @return {TRaster} - Filtered Image by using the convolution function
- *
  *  This function proceed a benchmark and then add a download action in the
- *  html page to download the result of the benchmark in a csv file 
+ *  html page to download the result of the benchmark in a csv file
  *
  * @author Gabor Szabo
  */
 function download_csv() {
+  let type = ["uint8", "uint16", "float32"];
+  let operation = ["mean", "convolve"];
+  for (var i = 0; i < array.length; i++) {
+    let tmp_img = newImages(type[i],360, 280);
+    let csv = benchmark("mean", tmp_img);
+    csv = csv.concat("\n").concat(benchmark("convolve", tmp_img));
+  }
+  console.log(img.raster.pixelData);
 
-    let csv = benchmark(img, "");
-
-    console.log(csv);
-    var hiddenElement = document.createElement('a');
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-    hiddenElement.target = '_blank';
-    hiddenElement.download = 'benchmark.csv';
-    document.getElementById('container').appendChild(hiddenElement);
-    hiddenElement.click();
+  // csv = csv.concat("\n").concat(benchmark("gaussian", img, ""));
+  // console.log(img.raster.pixelData);
+  var hiddenElement = document.createElement('a');
+  hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+  hiddenElement.target = '_blank';
+  hiddenElement.download = 'benchmark.csv';
+  document.getElementById('container').appendChild(hiddenElement);
+  hiddenElement.click();
 }
+
+
+let csv = benchmark("mean", img, "");
+csv = csv.concat("\n").concat(benchmark("convolve", img, ""));
+// csv = csv.concat("\n").concat(benchmark("gaussian", img, ""));
 
 // console.log(benchmark(img, " "));
