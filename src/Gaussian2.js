@@ -52,10 +52,7 @@ const gaussianTerms = (kernelSize, sigma) => {
     let tmp = "";
 
     for (let i = 0; i <= kernelSize; i++){
-
         terms[i] = gaussian(i - kernelSize / 2, sigma);
-        // tmp += terms[i].toString() + " ";
-
     }
     let test = terms.slice(0, Math.round(kernelSize / 2));
     

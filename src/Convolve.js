@@ -1,7 +1,8 @@
 'use strict'
 
 const splitKernel = kernel => {
-    let splittedKernel = kernel.split("\n").map(x => x.split(" "));
+    console.log(kernel);
+    let splittedKernel = kernel.split("\n").map(x => x.split(" "));//.filter(x => !isNaN(x));
     let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []);
     return {
         kernel : reducedKernel.map(x => parseFloat(x)),
@@ -18,6 +19,7 @@ const normalizeKernel = kernel => {
 
 const convolve = (kernel) =>  (image, copy = true) => {
     let useKernel = splitKernel(kernel);
+    console.log(useKernel);
     let output = T.Raster.from(image.raster);
     let pixels = output.pixelData;
     output.pixelData = output.pixelData.map(x => 0.0);
