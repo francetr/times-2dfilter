@@ -3,7 +3,8 @@
 const splitKernel = kernel => {
     console.log(kernel);
     let splittedKernel = kernel.split("\n").map(x => x.split(" "));//.filter(x => !isNaN(x));
-    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []);
+    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(parseFloat(x)), []).filter(x => !isNan(x));
+    console.log(reducedKernel);
     return {
         kernel : reducedKernel.map(x => parseFloat(x)),
         width : splittedKernel[0].length,
