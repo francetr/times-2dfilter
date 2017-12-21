@@ -136,6 +136,7 @@ In this case, time processing of Convolve, Mean and Gaussian blur were calculate
 
 Benchmarks for the Tiny Image ECMAScript Application were also realized based on time of processing, a JavaScript script was also implemented to automatize the process. We decided to run the benchmark 20 times for a given image and process, with a warmup phase (runs 10 times) and the benchmark (run 10 times). The benchmark correspond of the mean time,in millisecond, to process one operation for a given image. Different size of the image are tested (20 sizes different) with an initial size of *360*x*280*, and a proportionnal extansion of the width and height by adding 108 pixels, until the size reach *2160*x*1680*.
 We repeat the benchmark for the three types of image (uint8, uint16 and float32) and the three operations implemented (convolve, meanand Gaussian Blur). The results will be stored as a csv file that can be download by click on the html page.
+For the representation of the results obtained we used a diagram available in LibreOffice where the X axis represent the time processing (ms) and the Y axis the size of the image.
 
 Benchmarking in JavaScript is really complicated since the results are very variable and that they depend a lot on the state of the computer used for the test. Moreover, implementing a good benchmark implies a deep understanding of the execution processes and the interpreter. Thus the results obtained by our method have to be taken with care and as informative.
 
@@ -159,6 +160,13 @@ In a second time, a comparison between <b>```Real_Convolver.java```</b> and the 
 
 <center><img src='./img/convolve/vs.svg'></center>
 <span style = "font-size:10px"> <b>Figure 9</b>. Processing time for different images sizes and comparison between the ImageJ convolution and the `Real_Convolver.java`. From left to right we can see the diminution of time processing for both plugins but with a better performance for the FFT extra step processing.</span>
+<br/><br/>
+
+
+
+<center><img src = "./img/convolve/bench_times_convolve.png" width=600> </img></center>
+<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the convolve process of TIMES </span>
+<br/><br/>
 
 ### 2.2. Gaussian Blur
 
@@ -172,6 +180,12 @@ The general tendency for each boxplot if we compare both processes is the same. 
 
 If we take a look at the values on ordinate, we notice a time diminution when we apply the filter and plugin on smaller images. This fact is also true for the image type, but the image size seems to have more influence on running time.
 
+
+
+<center><img src = "./img/gaussian/bench_times_gaussian.png" width=600> </img></center>
+<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the Gaussian Blur filter of TIMES </span>
+<br/><br/>
+
 ### 2.3. Mean filter
 
 The results of the benchmark on ImageJ are represented in Figure 11.
@@ -182,7 +196,12 @@ The results of the benchmark on ImageJ are represented in Figure 11.
 
 We obtain 4 graphics (one per type of image) which contains 3 boxplots (one per size of image) comparing the differences of time processing. We notice no real differences of time processing regarding image types. However it is not the case for the size that shows the bigger the image is, the longer the processing last.
 
-Those obtained for the TIMES application are in the figure X
+As it has been said before, we perform benchmark on the mean Filter operation on different type and size of images. The kernel that was used for all these benchmark were a 3*3 kernel with values equal to 1.
+The results we obtained are represented in the figure X
+<center><img src = "./img/mean/bench_times_mean.png" width=600> </img></center>
+<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the mean filter of TIMES </span>
+<br/><br/>
+
 
 ## 3. Discussion
 The several benchmarks performed allowed us to observe certain behaviors for the different plugins tested.
