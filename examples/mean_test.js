@@ -50,16 +50,14 @@ win.addToDOM("workspace");
 let result = meanFilter(3)(img, true);
 img.setPixels(result.pixelData);
 
-// let workflow = T.pipe(
-//   meanFilter(3),
-//   T.view
-// );
-// let view2 = workflow(img.getRaster());
-
 let win2 = new T.Window('Mean Filter');
 let view2 = T.view(img.getRaster());
 win2.addView(view2);
 win2.addToDOM("workspace");
+
+// img.setPixels(new Uint8Array(img.length).fill(0.0));
+// img.setPixels(new Uint16Array(img.length).fill(0.0).map((px)=>px*256));
+// img.setPixels(new Float32Array(img.length).fill(0.0).map((px) => px/128 - 1.0));
 
 // BENCHMARK
 
@@ -69,7 +67,7 @@ win2.addToDOM("workspace");
   * @param {String} type - String of the type of image available
   * @param {Integer} width - Width of the image to process
   * @param {Integer} height - height of the image to process
-  * @return {Array} - Array conataining a set of different images (fixed arbitrarely to 58) with different size
+  * @return {Array} - Array conataining a set of different images (fixed arbitrarely to 20) with different size
   *
   * @author Tristan Frances
  */
@@ -77,20 +75,19 @@ const newImages=(type, width, height)=>{
   let tabImg=[];
   let img;
 
-  for (let i = 0; i < width * 4; i+=25){
+  for (let i = 0; i < width * 6; i+=108){
     if (type === "uint8") {
       img = new T.Image(type, i+width, i+height);
       img.setPixels(boats_pixels);
     }
     else if (type === "uint16") {
       img = new T.Image(type, i+width, i+height);
-      img.setPixels(boats_pixels.map((px)=>px*256));
+      img.setPixels(boats_pixels.map((px)=>px*256)); // set pixels with a conversion into uint16
     }
     else if (type == "float32") {
       img = new T.Image(type, i+width, i+height);
-      img.setPixels(boats_pixels.map((px) => px/128 - 1.0));
+      img.setPixels(boats_pixels.map((px) => px/128 - 1.0)); // set pixels ith a conversion into float32
     }
-
     tabImg.push(img);
   }
 
@@ -117,48 +114,56 @@ const benchmark = (operation, img_ref) =>{
   let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
   st = st.concat(operation, ",", img_ref.type,",", img_ref.width, "*", img_ref.height, ",");
   if (operation === "convolve") {
-    while ( r <10) {
-      let start = new Date().getMilliseconds();
-      let img_res = convolve(kernelConvolve)(img_ref, true);
-      // img_tmp.setPixels(img_res.pixelData);
-      let stop = new Date().getMilliseconds();
-      let bench = stop-start;
-      if (bench <0) {
-        bench=0;
+    while ( r <20) {
+      if (r<10) { // WARMUP
+        let img_res = convolve(kernelConvolve)(img_ref, true);
+      }else {
+        let start = new Date().getMilliseconds();
+        let img_res = convolve(kernelConvolve)(img_ref, true);
+        let stop = new Date().getMilliseconds();
+        let bench = stop-start;
+        if (bench <0) {
+          bench=0;
+        }
+        moy += bench;
       }
-      moy += bench;
       r++;
     }
   }else if (operation === "mean") {
-    while ( r <10) {
-      let start = new Date().getMilliseconds();
-      let img_res = meanFilter(3)(img_ref, true);
-      // img_tmp.setPixels(img_res.pixelData);
-      let stop = new Date().getMilliseconds();
-      let bench = stop-start;
-      if (bench <0) {
-        bench=0;
+    while ( r <20) {
+      if (r<10) { // WARMUP
+        let img_res = meanFilter(3)(img_ref, true);
+      }else {
+        let start = new Date().getMilliseconds();
+        let img_res = meanFilter(3)(img_ref, true);
+        let stop = new Date().getMilliseconds();
+        let bench = stop-start;
+        if (bench <0) {
+          bench=0;
+        }
+        moy += bench;
       }
-      moy += bench;
       r++;
     }
   }else if (operation === "gaussian") {
-    while ( r <10) {
-      let start = new Date().getMilliseconds();
-      let img_res = gaussBlur(3, 2.0)(img_ref, true);
-      // img_tmp.setPixels(img_res.pixelData);
-      let stop = new Date().getMilliseconds();
-      let bench = stop-start;
-      if (bench <0) {
-        bench=0;
+    while ( r <20) {
+      if (r<10) {//WARMUP
+        let img_res = gaussBlur(3, 2.0)(img_ref, true);
+      }else {
+        let start = new Date().getMilliseconds();
+        let img_res = gaussBlur(3, 2.0)(img_ref, true);
+        let stop = new Date().getMilliseconds();
+        let bench = stop-start;
+        if (bench <0) {
+          bench=0;
+        }
+        moy += bench;
       }
-      moy += bench;
       r++;
     }
   }
   moy /= r;
-  moy = moy.toString();
-  st = st.concat(moy,"\n");
+  st = st.concat(Math.floor(moy.toString()),"\n");
   return st;
 }
 
