@@ -27,13 +27,13 @@
 /**
  * Mean Kernel
  *
- * @param {TRaster} kernel - String that will be used as kernel for mean filter
+ * @param {Integer} kernel - Size (=width) of the kernel used for the mean filter 
  * @param {TRaster} img - Input image to process
  * @param {boolean} copy - Copy mode to manage memory usage
  * @return {TRaster} - Filtered Image by using the convolution function
  *
  * @author Tristan Frances
  */
- const meanFilter = (kernel) => (image, copy = true)=>{
-   return convolve(kernel)(image);
+ const meanFilter = (kernelSize) => (image, copy = true)=>{
+   return convolve(new Array(kernelSize * kernelSize).fill(0).map((x, i) => 1).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", ""))(image);
 }

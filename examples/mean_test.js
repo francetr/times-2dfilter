@@ -12,6 +12,8 @@ win.addView(view);
 // add window to the DOM
 win.addToDOM("workspace");
 
+
+
 // UINT16
 // let img01 = new T.Image('uint16',256,254);
 // let uint16_blobs = blobs_pixels.map ( (px) => px * 256);
@@ -44,10 +46,9 @@ win.addToDOM("workspace");
 /*
 * Apply the mean filter on the image
 */
-// let kernel="1 1 1\n1 1 1\n1 1 1";
-// // kernel = splitKernel(kernel);
-// let result = meanFilter(kernel)(img, true);
-// img.setPixels(result.pixelData);
+// kernel = splitKernel(kernel);
+let result = meanFilter(3)(img, true);
+img.setPixels(result.pixelData);
 
 // let workflow = T.pipe(
 //   meanFilter(kernel),
@@ -56,22 +57,11 @@ win.addToDOM("workspace");
 // let view2 = workflow(img.getRaster());
 
 let win2 = new T.Window('Mean Filter');
-let view2 = T.view(img.getRaster())
-// create a new view for the window
-
-// add view to the window
+let view2 = T.view(img.getRaster());
 win2.addView(view2);
 win2.addToDOM("workspace");
-// add window to the DOM
 
 // BENCHMARK
-// let img_tmp = new T.Image("uint8", img.width, img.height);
-// let win_tmp = new T.Window('Benchmark');
-// let view_tmp = T.view(img_tmp.getRaster());
-// win_tmp.addView(view_tmp);
-// win_tmp.addToDOM("workspace");
-
-// let res_uint8 = [];
 
 /**
   * Function to proceed the benchmark
@@ -125,7 +115,6 @@ const benchmark = (operation, img_ref) =>{
   let r = 0;
   let moy =0;
   let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
-  let kernel="1 1 1\n1 1 1\n1 1 1";
   st = st.concat(operation, ",", img_ref.type,",", img_ref.width, ",", img_ref.height, ",");
   if (operation === "convolve") {
     while ( r <10) {
@@ -143,7 +132,7 @@ const benchmark = (operation, img_ref) =>{
   }else if (operation === "mean") {
     while ( r <10) {
       let start = new Date().getMilliseconds();
-      let img_res = meanFilter(kernel)(img_ref, true);
+      let img_res = meanFilter(3)(img_ref, true);
       // img_tmp.setPixels(img_res.pixelData);
       let stop = new Date().getMilliseconds();
       let bench = stop-start;
@@ -156,7 +145,7 @@ const benchmark = (operation, img_ref) =>{
   }else if (operation === "gaussian") {
     while ( r <10) {
       let start = new Date().getMilliseconds();
-      let img_res = gaussBlur(9, 2.0)(img_ref, true);
+      let img_res = gaussBlur(3, 2.0)(img_ref, true);
       // img_tmp.setPixels(img_res.pixelData);
       let stop = new Date().getMilliseconds();
       let bench = stop-start;
@@ -176,15 +165,12 @@ const benchmark = (operation, img_ref) =>{
 /**
  * Function to download a csv file
  *
- *  This function proceed a benchmark and then add a download action in the
+ *  This function do benchmark and then add a download action in the
  *  html page to download the result of the benchmark in a csv file
  *
  * @author Gabor Szabo
  */
 function download_csv() {
-  // newImages("uint8", 360, 280);
-  // newImages('uint16', 360, 280);
-  // newImages('float32', 360, 280);
   let csv ="";
   let operation = ["mean", "convolve", "gaussian"];
   let type = ["uint8", "uint16", "float32"];
