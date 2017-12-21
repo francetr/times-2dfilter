@@ -107,11 +107,20 @@ For example if S<sub>xy</sub> represents the set of coordinates in a rectangular
 This operation can be implemented using a convolution mask in which all coefficients have a value of *1/(kw x kh)* with *kw* and *kh* respectively the kernel's width and height. A mean filter simply smoothes local variations in an image. Noise is reduced as a result of blurring. The main problem of this filter is that noisy pixels (including anomalous spikes) are weighted the same as all the other pixels in the kernel. <sup>[10]</sup>
 Because it uses a convolution kernel, we find the same issue as describe in section *1.2 Convolve*, thus the same solutions can be applied here for the edges of the picture.
 
-The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the kernel (previously defined) in parameter see Figure X
+The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the size of the kernel length (e.g. its width) in parameter. This value of size will be used to create a new Array with a size equals to the size kernel squared and fill with 0.0 values. The values of the array will be replaced by characters, with values equals to 1 or the return character in case the kernel changes of line. This operation is ensured by a map and a reduce functions, then this array will be used by the convolve function by spliting and processing as a kernel object (just like for the Gaussian Blur function), see Figure X.
 
 ```
-FUNCTION meanFilter(kernel)(image, copy=true)
-return convolve(kernel) (image)
+FUNCTION meanFilter(sizeKernel)(image, copy=true)
+return convolve(
+  Create new Array size = sizeKernel*sizeKernel
+  Fill Array with 0.0
+  Browse Array and replace values by 1
+  Transform each values into string
+    IF index % array width ===0:
+    value = "\n"+1+""
+    ELSE : value = 1+" "
+    )(image)
+  )
 END FUNCTION
 ```
 **Figure X** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
@@ -122,8 +131,11 @@ During our research, we did not find any plugins performing mean filter in a dif
 
 ### 1.4. Benchmark
 
-Benchmarks were realized based on time of processing on the same computer. A JavaScript script was implemented to automatize the process. First a warmup phase consisting in running 200 times the chosen operation is performed. After that the script switch to the testing phase consisting in 200 runs of the  selected. This process is used on the same RGB image with a size of *1920\*1200*. This image was converted into 32 bits, 16 bits and 8 bits greyscale images and the benchmark was performed on each of these pictures for each filter when it was possible. To get more data on other sizes of image, the initial picture was also resized two times. This leads to three images sizes : *1920\*1200*, *960\*600* and *512\*320*. The results are displayed in the ImageJ log console and saved into a csv file.
-In this case, time processing of Convolve, Mean and Gaussian blur were calculated. A R script allows to get a boxplot of the results showing the different quartils and the mean of data for the testing phase.  The process has been repeated for the alternatives plugins found for the different filters.
+Benchmarks for the ImageJ software were realized based on time of processing on the same computer. A JavaScript script was implemented to automatize the process. First a warmup phase consisting in running 200 times the chosen operation is performed. After that the script switch to the testing phase consisting in 200 runs of the  selected. This process is used on the same RGB image with a size of *1920\*1200*. This image was converted into 32 bits, 16 bits and 8 bits greyscale images and the benchmark was performed on each of these pictures for each filter when it was possible. To get more data on other sizes of image, the initial picture was also resized two times. This leads to three images sizes : *1920\*1200*, *960\*600* and *512\*320*. The results are displayed in the ImageJ log console and saved into a csv file.
+In this case, time processing of Convolve, Mean and Gaussian blur were calculated. A R script allows to get a boxplot of the results showing the different quartils and the mean of data for the testing phase. The process has been repeated for the alternatives plugins found for the different filters.
+
+Benchmarks for the Tiny Image ECMAScript Application were also realized based on time of processing, a JavaScript script was also implemented to automatize the process. We decided to run the benchmark 20 times for a given image and process, with a warmup phase (runs 10 times) and the benchmark (run 10 times). The benchmark correspond of the mean time,in millisecond, to process one operation for a given image. Different size of the image are tested (20 sizes different) with an initial size of *360*x*280*, and a proportionnal extansion of the width and height by adding 108 pixels, until the size reach *2160*x*1680*.
+We repeat the benchmark for the three types of image (uint8, uint16 and float32) and the three operations implemented (convolve, meanand Gaussian Blur). The results will be stored as a csv file that can be download by click on the html page.
 
 Benchmarking in JavaScript is really complicated since the results are very variable and that they depend a lot on the state of the computer used for the test. Moreover, implementing a good benchmark implies a deep understanding of the execution processes and the interpreter. Thus the results obtained by our method have to be taken with care and as informative.
 
