@@ -125,7 +125,7 @@ END FUNCTION
 ```
 **Figure X** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
 
-Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation involve that the kernel as to be well written before the mean filter is instantiated.
+Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation involves that the size is the kernel will be used in order to create the kernel when the mean filter is instantiated. This process occurs in the convolve function.
 
 During our research, we did not find any plugins performing mean filter in a different way than the one implemented in ImageJ software. That is why the benchmarking were realised only with the mean filter already implemented in ImageJ.
 
@@ -174,13 +174,15 @@ If we take a look at the values on ordinate, we notice a time diminution when we
 
 ### 2.3. Mean filter
 
-The results of this benchmark are represented in Figure 11.
+The results of the benchmark on ImageJ are represented in Figure 11.
 
 <center><img src = "./img/mean/boxplots.png" width=600> </img></center>
 <span style = "font-size:10px"><b>Figure 11.</b> Representation of the benchmark for the mean filter of ImageJ </span>
 <br/><br/>
 
 We obtain 4 graphics (one per type of image) which contains 3 boxplots (one per size of image) comparing the differences of time processing. We notice no real differences of time processing regarding image types. However it is not the case for the size that shows the bigger the image is, the longer the processing last.
+
+Those obtained for the TIMES application are in the figure X
 
 ## 3. Discussion
 The several benchmarks performed allowed us to observe certain behaviors for the different plugins tested.

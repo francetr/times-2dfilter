@@ -1,5 +1,5 @@
 /*
-  Test for a uint8 imgae
+  Test for a uint8 image
 */
 let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
@@ -36,7 +36,7 @@ win03.addToDOM('workspace');
 
 
 /*
-  Test for a uint16 imgae
+Test for a uint16 image
 */
 let img_uint16 = new T.Image('uint16',256,254);
 let uint16_blobs = blobs_pixels.map ( (px) => px * 256);
@@ -71,7 +71,7 @@ win03_uint16.addView(view03_uint16);
 win03_uint16.addToDOM('workspace');
 
 /*
-  Test for float 32
+  Test for float32 image
 */
 let img_float32 = new T.Image('float32',256,254);
 let float32_blobs = blobs_pixels.map ((px) => px/128 - 1.0);
