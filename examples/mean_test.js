@@ -46,12 +46,12 @@ win.addToDOM("workspace");
 /*
 * Apply the mean filter on the image
 */
-// kernel = splitKernel(kernel);
+
 let result = meanFilter(3)(img, true);
 img.setPixels(result.pixelData);
 
 // let workflow = T.pipe(
-//   meanFilter(kernel),
+//   meanFilter(3),
 //   T.view
 // );
 // let view2 = workflow(img.getRaster());
@@ -69,7 +69,7 @@ win2.addToDOM("workspace");
   * @param {String} type - String of the type of image available
   * @param {Integer} width - Width of the image to process
   * @param {Integer} height - height of the image to process
-  * @return {Array} - Array conataining a set of different images (fixed to 29) with different size
+  * @return {Array} - Array conataining a set of different images (fixed arbitrarely to 58) with different size
   *
   * @author Tristan Frances
  */
@@ -77,7 +77,7 @@ const newImages=(type, width, height)=>{
   let tabImg=[];
   let img;
 
-  for (let i = 0; i < width * 2; i+=25){
+  for (let i = 0; i < width * 4; i+=25){
     if (type === "uint8") {
       img = new T.Image(type, i+width, i+height);
       img.setPixels(boats_pixels);
@@ -115,11 +115,11 @@ const benchmark = (operation, img_ref) =>{
   let r = 0;
   let moy =0;
   let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
-  st = st.concat(operation, ",", img_ref.type,",", img_ref.width, ",", img_ref.height, ",");
+  st = st.concat(operation, ",", img_ref.type,",", img_ref.width, "*", img_ref.height, ",");
   if (operation === "convolve") {
     while ( r <10) {
       let start = new Date().getMilliseconds();
-      let img_res = meanFilter(kernelConvolve)(img_ref, true);
+      let img_res = convolve(kernelConvolve)(img_ref, true);
       // img_tmp.setPixels(img_res.pixelData);
       let stop = new Date().getMilliseconds();
       let bench = stop-start;
@@ -171,9 +171,11 @@ const benchmark = (operation, img_ref) =>{
  * @author Gabor Szabo
  */
 function download_csv() {
-  let csv ="";
-  let operation = ["mean", "convolve", "gaussian"];
+  let csv ="operation,type,taille,temps(ms)\n";
+  let operation = ["convolve", "mean", "gaussian"];
   let type = ["uint8", "uint16", "float32"];
+
+  // Proceed the benchmark for the given operations, type and size images
 
   for (let op = 0; op < operation.length; op++) {
     for (let typ = 0; typ < type.length; typ++) {
@@ -184,8 +186,6 @@ function download_csv() {
     }
   }
 
-  // csv = csv.concat("\n").concat(benchmark("gaussian", img, ""));
-  // console.log(img.raster.pixelData);
   var hiddenElement = document.createElement('a');
   hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
   hiddenElement.target = '_blank';
@@ -193,22 +193,3 @@ function download_csv() {
   document.getElementById('container').appendChild(hiddenElement);
   hiddenElement.click();
 }
-
-
-// let operation = ["mean", "convolve"];
-
-// let type = ["uint8", "uint16", "float32"];
-// let str="";
-
-// for (let op = 0; op < operation.length; op++) {
-//   for (let typ = 0; typ < type.length; typ++) {
-//     let tmp_img = newImages(type[typ],360, 280);
-//     for (let image = 0; image < tmp_img.length; image++) {
-//       csv = csv.concat(benchmark(operation[op], tmp_img)).concat("\n");
-//     }
-//   }
-// }
-
-// newImages("uint8", 360, 280);
-// newImages('uint16', 360, 280);
-let kernel="1 1 1\n1 1 1\n1 1 1";
