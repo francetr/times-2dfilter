@@ -138,7 +138,7 @@ return convolve(
   )
 END FUNCTION
 ```
-**Figure X** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
+**Figure 8** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
 
 Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation uses the kernel size in order to create the corresponding mean kernel. This process occurs in the convolve function.
 
@@ -166,7 +166,7 @@ We then compared the results between ImageJ results obtained from a precedent st
 
 <center><img src = "./img/convolve/bench_times_convolve.png" width=600> </img></center>
 
-**Figure X.** Benchmarking of the convolution function implemented in JS. The processing time increase with the image size as expected. The results are very similar to the one measured in our previous study.
+**Figure 9.** Benchmarking of the convolution function implemented in JS. The processing time increase with the image size as expected. The results are very similar to the one measured in our previous study.
 
 ### 2.2. Gaussian Blur
 
@@ -183,7 +183,7 @@ If we take a look at the values on ordinate, we notice a time diminution when we
 
 
 <center><img src = "./img/gaussian/bench_times_gaussian.png" width=600> </img></center>
-<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the Gaussian Blur filter of TIMES </span>
+<span style = "font-size:10px"><b>Figure 11.</b> Representation of the benchmark for the Gaussian Blur filter of TIMES </span>
 <br/><br/>
 
 ### 2.3. Mean filter
@@ -192,7 +192,7 @@ The results of the benchmark on ImageJ are represented in Figure 11.
 
 <center><img src = "./img/mean/boxplots.png" width=600> </img></center>
 
-**Figure X.** Benchmarking of the ImageJ mean filter. Four plots are presentsone for each type of image and inside them the boxplots represent one size of image each.
+**Figure 12.** Benchmarking of the ImageJ mean filter. Four plots are presentsone for each type of image and inside them the boxplots represent one size of image each.
 
 We obtained 4 plots (one per type of image) which contained 3 boxplots (one per size of image) comparing the differences of time processing. We noticed no real differences of time processing regarding image types. However it is not the case for the size that shows the bigger the image is, the longer the processing lasts.
 
@@ -201,7 +201,7 @@ The results we obtained are represented in the figure X. We can see an increase 
 
 <center><img src = "./img/mean/bench_times_mean.png" width=600> </img></center>
 
-**Figure X.** Benchmarking of mean filter function implemented in JS. We can see an increase of time processing the more the image size raises. The difference between images in term of time processing is not quite appearent.
+**Figure 13.** Benchmarking of mean filter function implemented in JS. We can see an increase of time processing the more the image size raises. The difference between images in term of time processing is not quite appearent.
 
 ## 3. Discussion
 
