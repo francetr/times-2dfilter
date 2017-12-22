@@ -1,20 +1,39 @@
+/*
+ *  TIMES: Tiny Image ECMAScript Application
+ *  Copyright (C) 2017  Jean-Christophe Taveau.
+ *
+ *  This file is part of TIMES
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,Image
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with TIMES.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
 'use strict'
 
-const splitKernel = kernel => {
-    let splittedKernel = kernel.split("\n").map(x => x.split(" ")).filter(x => x.length != 1);
-    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []).filter(x => x != "");
-    return {
-        kernel : reducedKernel.map(x => parseFloat(x)),
-        width : splittedKernel[0].filter(x => x != "").length,
-        height : splittedKernel.length,
-        sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
-    };
-}
 
-const normalizeKernel = kernel => {
-    let maximum = Math.abs(Math.max.apply(Math, kernel.kernel));
-    kernel.kernel = kernel.kernel.map(x => x / maximum);
-}
+/**
+ * Convolve operation
+ *
+ * @param {String} kernel - Convolution mask
+ * @param {TImage} img - Input image to process
+ * @param {boolean} copy - Copy mode to manage memory usage
+ * @return {TRaster} - Filtered Image
+ *
+ * @author Thomas Maucourt
+ */
 
 const convolve = (kernel) => (image, copy = true) => {
     let useKernel = splitKernel(kernel);
@@ -40,4 +59,36 @@ const convolve = (kernel) => (image, copy = true) => {
         }
     }
     return output;
+}
+
+ /**
+ * Kernel formating
+ *
+ * @param {String} - kernel as a string (need to be formated as in ImageJ software)
+ * @return {Kernel-Object} - Kernel object containing several informations
+ *
+ * @author Thomas Maucourt
+ */
+// Function allowing the conversion from a string kernel to a 1D array
+const splitKernel = kernel => {
+    let splittedKernel = kernel.split("\n").map(x => x.split(" ")).filter(x => x.length != 1);
+    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []).filter(x => x != "");
+    return {
+        kernel : reducedKernel.map(x => parseFloat(x)),
+        width : splittedKernel[0].filter(x => x != "").length,
+        height : splittedKernel.length,
+        sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
+    };
+}
+
+ /**
+ * Kernel normalization (optionnal)
+ *
+ * @param {Kernel-Object} - Take a kernel object and apply normalization as found in ImageJ software
+ *
+ * @author Thomas Maucourt
+ */
+const normalizeKernel = kernel => {
+    let maximum = Math.abs(Math.max.apply(Math, kernel.kernel));
+    kernel.kernel = kernel.kernel.map(x => x / maximum);
 }
