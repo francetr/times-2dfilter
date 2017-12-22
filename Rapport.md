@@ -31,8 +31,8 @@ We previously define that convolution needed an image and a kernel to be perform
 * starting the processing at position *(X<sub>kw-1/2</sub>, Y<sub>kh-1/2</sub>)* with *kw* and *kh* respectively the kernel's width and height
 
 <center><img src = "./img/convolve/outside_kernel.png" width=200px></center>
-<span style = "font-size:12px"> <b>Figure 2</b>. Boundary issue for a 3 x 3 kernel. On the edges of the picture some parts of the kernel can be located outside the image.</span>
-<br/><br/>
+
+**Figure 2** : Boundary issue for a 3 x 3 kernel. On the edges of the picture some parts of the kernel can be located outside the image.
 
 As convolution is a well defined mathematical principle very used in many domains and especially in image processing, several methods have been developed to improve the computation. We can find four main implementations of convolution :
 * basic approach
@@ -70,8 +70,9 @@ FUNCTION convolve(kernel)(image, copy = true):
     RETURN result
 ```
 
-**Figure X** : Pseudocode describing the algorithm used to compute the convolution. The algorithm used is based on the basic approach and starts the processing using the crop method based on the kernel size.
+**Figure 3** : Pseudocode describing the algorithm used to compute the convolution. The algorithm used is based on the basic approach and starts the processing using the crop method based on the kernel size.
 
+It is important to notice that we followed the example of ImageJ software. Meaning that the kernel must be passed as a string to the convolve function. Then the string will be processed to create a kernel object containing informations about the size, width, height and the kernel himself as a 1D array. Then the convolution occurs. It just processes each part of the image and compute the convolution product. Finally the value computed is stored inside a raster that is returned at the end and used to apply changes to the image. An optionnal function was implemented in order to allow the user to normalize its kernel as it is available in ImageJ software.
 
 ### 1.2. Gaussian Blur
 
@@ -107,7 +108,7 @@ For example if S<sub>xy</sub> represents the set of coordinates in a rectangular
 This operation can be implemented using a convolution mask in which all coefficients have a value of *1/(kw x kh)* with *kw* and *kh* respectively the kernel's width and height. A mean filter simply smoothes local variations in an image. Noise is reduced as a result of blurring. The main problem of this filter is that noisy pixels (including anomalous spikes) are weighted the same as all the other pixels in the kernel. <sup>[10]</sup>
 Because it uses a convolution kernel, we find the same issue as describe in section *1.2 Convolve*, thus the same solutions can be applied here for the edges of the picture.
 
-The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the size of the kernel length (e.g. its width) in parameter. This value of size will be used to create a new Array with a size equals to the size kernel squared and fill with 0.0 values. The values of the array will be replaced by characters, with values equals to 1 or the return character in case the kernel changes of line. This operation is ensured by a map and a reduce functions, then this array will be used by the convolve function by spliting and processing as a kernel object (just like for the Gaussian Blur function), see Figure X.
+The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the size of the kernel (e.g. its width) in parameter. This value of size is then used to create a new Array with a size equals to the size kernel squared and fill with 0.0 values. The values of the array will be replaced by characters, with values equals to 1 or the return character in case the kernel changes of line. This operation is ensured by a map and a reduce functions, then this array will be used by the convolve function by spliting and processing as a kernel object (just like for the Gaussian Blur function), see Figure X.
 
 ```
 FUNCTION meanFilter(sizeKernel)(image, copy=true)
@@ -125,9 +126,11 @@ END FUNCTION
 ```
 **Figure X** : Pseudocode describing the algorithm used to compute the mean filter. This approach is based on the convolution function.
 
-Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation involves that the size is the kernel will be used in order to create the kernel when the mean filter is instantiated. This process occurs in the convolve function.
+Hence the mean filter will return the output of the convolution process, on the image selected, for its specific kernel. This implementation uses the kernel size in order to create the corresponding mean kernel. This process occurs in the convolve function.
 
 During our research, we did not find any plugins performing mean filter in a different way than the one implemented in ImageJ software. That is why the benchmarking were realised only with the mean filter already implemented in ImageJ.
+
+involves that the size is the kernel will be used in order to create the kernel when the mean filter is instantiated.
 
 ### 1.4. Benchmark
 
@@ -138,35 +141,18 @@ Benchmarks for the Tiny Image ECMAScript Application were also realized based on
 We repeat the benchmark for the three types of image (uint8, uint16 and float32) and the three operations implemented (convolve, meanand Gaussian Blur). The results will be stored as a csv file that can be download by click on the html page.
 For the representation of the results obtained we used a diagram available in LibreOffice where the X axis represent the time processing (ms) and the Y axis the size of the image.
 
-Benchmarking in JavaScript is really complicated since the results are very variable and that they depend a lot on the state of the computer used for the test. Moreover, implementing a good benchmark implies a deep understanding of the execution processes and the interpreter. Thus the results obtained by our method have to be taken with care and as informative.
+Benchmarking in JavaScript is really complicated since the results are very variable and that they depend a lot on the state of the computer used for the test. Moreover, implementing a good benchmark implies a deep understanding of the execution processes and the interpreter. Thus the results obtained by our method have to be taken with care and as informative. Moreover it is really difficult to make some comparisons with ImageJ results obtained from a previous study. Actually the performance have not been measured on the same program, one was performed in ImageJ and the other in the web browser.
 
 ## 2. Results
 
 ### 2.1. Convolve
-We compared two plugins, one realizing the "original" way to make a convolution and another one getting an extra step of FFT to get the result.
-The first thing important to note is that the output images from one method and the other are the same (Figure 7).
+In order to assess the convolution costs in term of time processing, we used the benchmark method described previously. We found no significant difference in terms of image type for the processing. However regarding image size, we found that the more pixels are present in the image the more times it takes to achieve convolution process. This seems logical since there are more calculation to perform in order to convolve the entire image. 
 
-<center><img src = "./img/convolve/RC_vs_C.png"></center>
-<span style = "font-size:10px"> <b>Figure 7.</b> Convolution performed with ```Real_Convolver.java``` (on the left) and the ImageJ default convolution filter (on the right)</span>
-<br/><br/>
-
-First, the time of processing for the different images size were computed using R (Figure 8). This shows a diminution of processing time the smaller the image gets.
-
-<center><img src='./img/convolve/size.svg' width=600></center>
-<span style = "font-size:10px"> <b>Figure 8</b>. Comparison of convolution processing time for 3 types of images. The reduction of pixels leads to a decrease in time processing for the ImageJ implementation of convolution and for the plugin ```Real_Convolver.java```.</span>
-<br/><br/>
-
-In a second time, a comparison between <b>```Real_Convolver.java```</b> and the convolution plugin implemented into ImageJ was performed (Figure 9). We can see that the plugin using the step of FFT, the ImageJ's one, takes less time to process an image no matter the considered size.
-
-<center><img src='./img/convolve/vs.svg'></center>
-<span style = "font-size:10px"> <b>Figure 9</b>. Processing time for different images sizes and comparison between the ImageJ convolution and the `Real_Convolver.java`. From left to right we can see the diminution of time processing for both plugins but with a better performance for the FFT extra step processing.</span>
-<br/><br/>
-
-
+We then compared the results between ImageJ results obtained from a precedent study (data not shown) and those coming from this study (Figure X). We determined that the processing time is quite similar to ImageJ plugin `Real_Convolver` while using a web browser and JS (~140 ms for a 1920x1080 image vs 120 ms for the JS implementation). This could possibly be explained by the fact that current JavaScript engines have been extremely optimized since this technology is widely used on the web.
 
 <center><img src = "./img/convolve/bench_times_convolve.png" width=600> </img></center>
-<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the convolve process of TIMES </span>
-<br/><br/>
+
+**Figure X.** Benchmarking of the convolution function implemented in JS. The processing time increase with the image size as expected. The results are very similar to the one measured in our previous study.
 
 ### 2.2. Gaussian Blur
 
@@ -191,33 +177,30 @@ If we take a look at the values on ordinate, we notice a time diminution when we
 The results of the benchmark on ImageJ are represented in Figure 11.
 
 <center><img src = "./img/mean/boxplots.png" width=600> </img></center>
-<span style = "font-size:10px"><b>Figure 11.</b> Representation of the benchmark for the mean filter of ImageJ </span>
-<br/><br/>
 
-We obtain 4 graphics (one per type of image) which contains 3 boxplots (one per size of image) comparing the differences of time processing. We notice no real differences of time processing regarding image types. However it is not the case for the size that shows the bigger the image is, the longer the processing last.
+**Figure X.** Benchmarking of the ImageJ mean filter. Four plots are presentsone for each type of image and inside them the boxplots represent one size of image each.
+
+We obtained 4 plots (one per type of image) which contained 3 boxplots (one per size of image) comparing the differences of time processing. We noticed no real differences of time processing regarding image types. However it is not the case for the size that shows the bigger the image is, the longer the processing lasts.
 
 As it has been said before, we perform benchmark on the mean Filter operation on different type and size of images. The kernel that was used for all these benchmark were a 3*3 kernel with values equal to 1.
-The results we obtained are represented in the figure X
-<center><img src = "./img/mean/bench_times_mean.png" width=600> </img></center>
-<span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the mean filter of TIMES </span>
-<br/><br/>
+The results we obtained are represented in the figure X. We can see an increase of time processing for an increasing image size. However no real differences can be made between image types in term of time processing.
 
+<center><img src = "./img/mean/bench_times_mean.png" width=600> </img></center>
+
+**Figure X.** Benchmarking of mean filter function implemented in JS. We can see an increase of time processing the more the image size raises. The difference between images in term of time processing is not quite appearent.
 
 ## 3. Discussion
-The several benchmarks performed allowed us to observe certain behaviors for the different plugins tested.
 
-For the convolution part, we have seen that the algorithm using an FFT before the convolution (ImageJ) seems to have better performances than the `Real_Convolver.java`. As expected, we saw a decrease of processing time the less the image is big and this has been seen for all the filters. That can easily be explained by the fact that it needs less computing for tiny image because there are less pixels to process.
+During this study we implemented ImageJ functions which are convolution, mean filter and Gaussian blur filter. We followed the functionnal programing paradigm in order to reduce the amount of code and potentially increase its readability. 
 
-According to our results, we can say that there is a processing time difference between the Gaussian Blur filter and the Accurate Gaussian blur filter which can be explain by the fact that this last has high accuracy taking more time when computing. We can also say that images types have an influence on process duration, this one beeing longer with RGB pictures than 8-bits images. We can explain time processing differences between RGB and grayscale images by the values contained into the pixels. Actually in RGB pictures, we have three channels whereas grayscale pictures just have one. Then the less bits are used to compose an image the less memory it takes and so the less time processing lasts.
+After benchmarking, for each functions we saw that the differences of time processing are more imacted by image size than image type. We supposed that this was due to the strong optimization made around the JS engines. However we do not have any explanation for the lack of difference of time processing for the different image types.
 
-Concerning the mean filter, the results of the benchmark do not allow us to conclude because of the lack of alternative plugins and the weak sturdiness of the benchmarking using JavaScript. This can be explained by the fact that the mean filter is not a good noise remover, due to its simple algorithm. Several other methods, like Gaussian blur filter or median filter (not linear), have been developed to produce more efficients filters for noise removal.
+We performed some comparisons with benchmark realized during the previous step of development. We did not see any real differences in terms of time processing between ImageJ and our own JS implementation using the `times` API. 
 
 ## Conclusion
-Through this work, we were able to study the different process used for 2D filtering. The final goal is to implement the best algorithm into a "web ImageJ like" for each filter studied.
+Through this work, we were able to study the different process used for 2D filtering. The final goal was to implement these filters in JS using the `times` API. 
 
-For a first approach we will implement the basic approach of convolution. For the further steps, we would like to use the convolution algorithm found in ImageJ source code. This will depends on the work of the team working on FFT. We will also implement the recognition of separable kernels to increase a bit more the processing by creating two vectors that will be used to make the convolution in two steps.
-
-We strongly consider to implement a `Convolve` Class which has the purpose to make easier the implementation of the Gaussian Blur and mean filter implementations. Thus, those would be implemented by simply calling this class and specifying the paramaters adapted in agreement with the operation to apply.
+Since convolution is a process which can be parallelized, the next goal is to implement this process for GPU computing. We will then use the webGL technology and convert our different algorithms in order to use them with it.
 
 ## References
 1. Rasband, W.S., ImageJ, U. S. National Institutes of Health, Bethesda, Maryland, USA, https://imagej.nih.gov/ij/, 1997-2016.
