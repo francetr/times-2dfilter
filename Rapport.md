@@ -79,36 +79,47 @@ It is important to notice that we followed the example of ImageJ software. Meani
 
 ### 1.2. Gaussian Blur
 
-The Gaussian Blur also known as Gaussian Smoothing operator is a convolution operator used to blur<sup>[7]</sup> images and remove details and noise (Figure 4). In this sense it is similar to the mean filter, but differs by using a different kernel.
+The Gaussian Blur also known as Gaussian Smoothing operator is a convolution operator used to blur<sup>[2]</sup> images and remove details and noise (Figure 4). In this sense it is similar to the mean filter, but differs by using a different kernel.
 
 <center><img src = "./img/gaussian/demo_gaussian.png"> </img></center>
-<span style = "font-size:10px"><b>Figure 4.</b> Result of Gaussian blur filtering. (A) Original picture. (B) Filtered image. </span>
-<br/><br/>
+<center><span style = "font-size:10px"><b>Figure 4.</b> Result of Gaussian blur filtering. (A) Original picture. (B) Filtered image. </span>
+<br/><br/></center>
 
 Differently sized kernels containing different patterns of numbers give rise to different results under convolution. For instance, Figure 5 shows a 5x5 kernel that implements a Gaussian Blur filter.
 
 <center><img src = "./img/gaussian/kernel.gif" width=150> </img></center>
-<span style = "font-size:10px"><b>Figure 5.</b> Example of a Gaussian kernel.</span>
-<br/><br/>
+<center><span style = "font-size:10px"><b>Figure 5.</b> Example of a Gaussian kernel.</span>
+<br/><br/></center>
 
-The Gaussian kernel is named after Carl Friedrich Gauß (1777-1855), a German mathematician. They belong to separable kernels described above and are composed of Gaussian values obtained from the Gauss distribution (Figure 6). Using such kernel allows a strong decrease of the algorithmic complexity and thus a quicker processing<sup>[8]</sup>. Gaussian Blur filtering consists in realising a convolution on a picture with a Gaussian kernel.
+The Gaussian kernel is named after Carl Friedrich Gauß (1777-1855), a German mathematician. They belong to separable kernels described above and are composed of Gaussian values obtained from the Gauss distribution (Figure 6). Using such kernel allows a strong decrease of the algorithmic complexity and thus a quicker processing<sup>[3]</sup>. Gaussian Blur filtering consists in realising a convolution on a picture with a Gaussian kernel.
 
 <center><img src = "./img/gaussian/equation_graph.png" width=250> </img></center>
-<span style = "font-size:10px">
+<center><span style = "font-size:10px">
 <b>Figure 6.</b> Representation of the Gaussian distribution and equation.</span>
-<br/><br/>
+<br/><br/></center>
 
 In the equation, *x* is the distance from the origin for the absciss, *y* is the distance from the origin for the ordinate, and σ is the standard deviation of the Gaussian distribution. Again, to speed up image processing, algorithm have been developed. Here we will compare the ImageJ default ```Gaussian Blur``` filter to a JAVA  plugin, ```Accurate Gaussian Blur``` (credit to Michael Schmid). This last has been implemented for high accuracy treatement especially for 32-bits images. Also, these methods encounter the same trouble as the convolution in term of image edges.
 
+```
+const gaussBlur = (kernelSize, sigma) => (image, copy = true) => convolve(new Array(kernelSize * kernelSize).fill(0).map((x, i) => Math.exp(-(i - kernelSize / 2) * (i - kernelSize / 2 / 2.0 * Math.pow(sigma, 2.0)) / Math.sqrt(2.0 * Math.pow(sigma, 2.0) * Math.PI))).reduce((acc, x, i) => acc += i % kernelSize === 0 ? "\n" + x + " " : x + " ", ""))(image, copy);
+```
+
+**Figure 7** : Code describing the algorithm used to compute the gaussian blur filter by using functionnal programming. 
+
+Before obtaining the final method 2 methods has been implemented,  <b>```gaussianBlur```</b> and <b>```gaussianTerms```</b>. Idea was to
+ create a function returning a kernel. Then, knowing gaussian blur filter being a kind of convolution,  you just have to use the <b>```convolve```</b> method by passing a kernel in argument. That is why our <b>```gaussianTerms```</b> method return a kernel. 
+
+Concerning this method,  it just calcul the value  of each token of the kernel and just take the kernel size and sigma in arguments respecting the formula described in figure 6.
+
 ### 1.3. Mean filter
 
-Among the linear filters, the most common is the mean filter because it is easy to implement and reliable. As said before (see section *1.3 Gaussian blur*), it is a smoothing filter aiming to smooth an image by blurring and removing details and noise. As follows, a convolution mask is used, it can be differently shaped (square, rectangular or circular) and in vast majority the weights in the kernel are uniforms (meaning the values in the kernel are the same), but those can also be triangular (i.e. inversely proportionnal to distance from the input sample)<sup>[9]</sup>.
+Among the linear filters, the most common is the mean filter because it is easy to implement and reliable. As said before (see section *1.2 Gaussian blur*), it is a smoothing filter aiming to smooth an image by blurring and removing details and noise. As follows, a convolution mask is used, it can be differently shaped (square, rectangular or circular) and in vast majority the weights in the kernel are uniforms (meaning the values in the kernel are the same), but those can also be triangular (i.e. inversely proportionnal to distance from the input sample)<sup>[4]</sup>.
 
 For example if S<sub>xy</sub> represents the set of coordinates in a rectangular sub image window of size *m × n* centered at point *(x,y)*, the arithmetic mean filtering process computes the average value of the initial image *g(x,y)* in the area defined by S<sub>xy</sub>. The value of the final image *f* at any point *(x,y)* is simply the arithmetic mean computed using the pixels in the region defined by S<sub>xy</sub>. In other words :
 
 <center><img src = "./img/mean/equation.png" width=250px> </img></center>
 
-This operation can be implemented using a convolution mask in which all coefficients have a value of *1/(kw x kh)* with *kw* and *kh* respectively the kernel's width and height. A mean filter simply smoothes local variations in an image. Noise is reduced as a result of blurring. The main problem of this filter is that noisy pixels (including anomalous spikes) are weighted the same as all the other pixels in the kernel. <sup>[10]</sup>
+This operation can be implemented using a convolution mask in which all coefficients have a value of *1/(kw x kh)* with *kw* and *kh* respectively the kernel's width and height. A mean filter simply smoothes local variations in an image. Noise is reduced as a result of blurring. The main problem of this filter is that noisy pixels (including anomalous spikes) are weighted the same as all the other pixels in the kernel. <sup>[5]</sup>
 Because it uses a convolution kernel, we find the same issue as describe in section *1.2 Convolve*, thus the same solutions can be applied here for the edges of the picture.
 
 The mean filter is actually a convolution which uses a specific type of kernel (usually a square kernel where all the values are equal to 1), hence we decided to implement it in javascript as a function which take the size of the kernel (e.g. its width) in parameter. This value of size is then used to create a new Array with a size equals to the size kernel squared and fill with 0.0 values. The values of the array will be replaced by characters, with values equals to 1 or the return character in case the kernel changes of line. This operation is ensured by a map and a reduce functions, then this array will be used by the convolve function by spliting and processing as a kernel object (just like for the Gaussian Blur function), see Figure X.
@@ -212,22 +223,12 @@ The implementation in webGL is now our main idea and we will focus on this to in
 ## References
 1. Rasband, W.S., ImageJ, U. S. National Institutes of Health, Bethesda, Maryland, USA, https://imagej.nih.gov/ij/, 1997-2016.
 
-2. S. Kadam. Parallelization of Low-Level Computer Vision Algorithms on Clusters. In AMS ’08: Proceedings of the 2008 Second Asia International Conference on Modelling & Simulation (AMS), pages 113–118, Washington, DC, USA, 2008. IEEE Computer Society. ISBN: 978-0-7695-3136-6.
+2. Kabbai, Leila & Sghaier, Anissa & Douik, Ali & Machhout, Mohsen. (2016). FPGA implementation of filtered image using 2D Gaussian filter. International Journal of Advanced Computer Science and Applications. 7. . 10.14569/IJACSA.2016.070771.
 
-3. Robert Hummel and David Loew. Computing Large-Kernel Convolutions of Images. Technical report, New York University, Courant Institute of Mathematical Sciences, 1986.
+3. Waltz FM, Miller JWV. An efficient algorithm for Gaussian blur using finite-state machines. Atmospheric Effects on Electro-Optical, Infrared, and Millimeter Wave Systems Performance, Contemporary Methods of Optical Fabrication, D Mach Percept, Developments in Civil Engineering, INT CONF ON FOURIER TRANSFORM INFRARED SPECTROSC, INT SYMP OF BIOMECH CINEMATOGR AND HIGH SPEED PHOTOGR, 2ND, PROC SPIE INT SOC OPT ENG, Proceedings of SPIE- The International Society for Optical Engineering, Proceedings of SPIE-The International Society for Optical Engineering, SHUTTLE OPT ENVIRON, Wavefront Distortions in Power Opt. 1998;3521:334‑41.
 
-4. B. Jähne. Digital Image Processing. Springer, 5th edition, 2002.
+4. MATT HALL. Smooth operator: Smoothing seismic interpretations and attributes. The Leading Edge. 2007 Jan;26(1):16–20.
 
-5. Jan J, Engineers I of E. Digital Signal Filtering, Analysis and Restoration. IET; 2000. 430 p.
-
-6. R. N. Bracewell. Fourier Analysis and Imaging. Springer, 2006
-
-7. Kabbai, Leila & Sghaier, Anissa & Douik, Ali & Machhout, Mohsen. (2016). FPGA implementation of filtered image using 2D Gaussian filter. International Journal of Advanced Computer Science and Applications. 7. . 10.14569/IJACSA.2016.070771.
-
-8. Waltz FM, Miller JWV. An efficient algorithm for Gaussian blur using finite-state machines. Atmospheric Effects on Electro-Optical, Infrared, and Millimeter Wave Systems Performance, Contemporary Methods of Optical Fabrication, D Mach Percept, Developments in Civil Engineering, INT CONF ON FOURIER TRANSFORM INFRARED SPECTROSC, INT SYMP OF BIOMECH CINEMATOGR AND HIGH SPEED PHOTOGR, 2ND, PROC SPIE INT SOC OPT ENG, Proceedings of SPIE- The International Society for Optical Engineering, Proceedings of SPIE-The International Society for Optical Engineering, SHUTTLE OPT ENVIRON, Wavefront Distortions in Power Opt. 1998;3521:334‑41.
-
-9. MATT HALL. Smooth operator: Smoothing seismic interpretations and attributes. The Leading Edge. 2007 Jan;26(1):16–20.
-
-10. Gajanand Gupta. Algorithm for Image Processing Using Improved Median Filter and Comparison of Mean, Median and Improved Median Filter. International Journal of Soft Computing and Engineering (IJSCE) ISSN. 2011 Nov;Volume-1(Issue-5):2231–307.
+5. Gajanand Gupta. Algorithm for Image Processing Using Improved Median Filter and Comparison of Mean, Median and Improved Median Filter. International Journal of Soft Computing and Engineering (IJSCE) ISSN. 2011 Nov;Volume-1(Issue-5):2231–307.
 
 </span>
