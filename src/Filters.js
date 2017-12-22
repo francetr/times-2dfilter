@@ -23,29 +23,6 @@
  */
 'use strict'
 
-
-
-/**
- * Mean Kernel
- *
- * @param {String} kernel - String that will be split and used as a kernel object
- * @return {Kernel} - Kernel object
- *
- * @author Thomas Maucourt
- */
-const splitKernel = kernel => {
-    let splittedKernel = kernel.split("\n").map(x => x.split(" ")).filter(x => x.length != 1);
-    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []).filter(x => x != "");
-    return {
-        kernel : reducedKernel.map(x => parseFloat(x)),
-        width : splittedKernel[0].filter(x => x != "").length,
-        height : splittedKernel.length,
-        sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
-    };
-}
-
-
-
 /**
  * Normalize Kernel
  *
@@ -61,12 +38,12 @@ const normalizeKernel = kernel => {
 
 
 /**
- * Convolve
+ * Convolve operation
  *
- * @param {String} kernel - String containing the values of the kernel which be applied for convolve
- * @param {TRaster} image - Input image to process
+ * @param {String} kernel - Convolution mask
+ * @param {TImage} img - Input image to process
  * @param {boolean} copy - Copy mode to manage memory usage
- * @return {TRaster} - Filtered Image by using the convolution function
+ * @return {TRaster} - Filtered Image
  *
  * @author Thomas Maucourt
  */
@@ -95,6 +72,38 @@ const convolve = (kernel) => (image, copy = true) => {
         }
     }
     return output;
+}
+
+ /**
+ * Kernel formating
+ *
+ * @param {String} - kernel as a string (need to be formated as in ImageJ software)
+ * @return {Kernel-Object} - Kernel object containing several informations
+ *
+ * @author Thomas Maucourt
+ */
+// Function allowing the conversion from a string kernel to a 1D array
+const splitKernel = kernel => {
+    let splittedKernel = kernel.split("\n").map(x => x.split(" ")).filter(x => x.length != 1);
+    let reducedKernel = splittedKernel.reduce((accu, x) => accu.concat(x), []).filter(x => x != "");
+    return {
+        kernel : reducedKernel.map(x => parseFloat(x)),
+        width : splittedKernel[0].filter(x => x != "").length,
+        height : splittedKernel.length,
+        sum : reducedKernel.reduce((accu, x) => parseFloat(x) + accu, 0),
+    };
+}
+
+ /**
+ * Kernel normalization (optionnal)
+ *
+ * @param {Kernel-Object} - Take a kernel object and apply normalization as found in ImageJ software
+ *
+ * @author Thomas Maucourt
+ */
+const normalizeKernel = kernel => {
+    let maximum = Math.abs(Math.max.apply(Math, kernel.kernel));
+    kernel.kernel = kernel.kernel.map(x => x / maximum);
 }
 
 
