@@ -24,20 +24,6 @@
 'use strict'
 
 /**
- * Normalize Kernel
- *
- * @param {Integer} kernel - Size (=width) of the kernel used for the mean filter
- *
- * @author Thomas Maucourt
- */
-const normalizeKernel = kernel => {
-    let maximum = Math.abs(Math.max.apply(Math, kernel.kernel));
-    kernel.kernel = kernel.kernel.map(x => x / maximum);
-}
-
-
-
-/**
  * Convolve operation
  *
  * @param {String} kernel - Convolution mask
