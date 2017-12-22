@@ -1,11 +1,14 @@
 # <center>2D filters methods for image processing</center>
-<span style = "color:grey">**Formation**</span> Master 2 Bioinformatic<br/>
-<span style = "color:grey;float:right">**Course 4TBI901U**</span> Structural Bioinformatic<br/>
+<span style = "color:grey">**Formation**</span> Master 2 Bioinformatic
+
+<span style = "color:grey">**Course 4TBI901U**</span> Structural Bioinformatic
+
 <span style = "color:grey">**Authors**</span>
 Gary BOUCHENTOUF <b>*</b>
 Tristan FRANCES
-Thomas MAUCOURT<br/>
-<span style = "color:grey;float:right">**Referent**</span>
+Thomas MAUCOURT
+
+<span style = "color:grey">**Referent**</span>
 Jean-Christophe TAVEAU
 
 ## Introduction
@@ -148,7 +151,7 @@ Benchmarking in JavaScript is really complicated since the results are very vari
 ### 2.1. Convolve
 In order to assess the convolution costs in term of time processing, we used the benchmark method described previously. We found no significant difference in terms of image type for the processing. However regarding image size, we found that the more pixels are present in the image the more times it takes to achieve convolution process. This seems logical since there are more calculation to perform in order to convolve the entire image. 
 
-We then compared the results between ImageJ results obtained from a precedent study (data not shown) and those coming from this study (Figure X). We determined that the processing time is quite similar to ImageJ plugin `Real_Convolver` while using a web browser and JS (~140 ms for a 1920x1080 image vs 120 ms for the JS implementation). This could possibly be explained by the fact that current JavaScript engines have been extremely optimized since this technology is widely used on the web.
+We then compared the results between ImageJ results obtained from a precedent study (data not shown) and those coming from this study (Figure X). We determined that the processing time is quite similar to ImageJ plugin `Real_Convolver` while using a web browser and JS (~140 ms for a 1920x1080 image vs 120 ms for the JS implementation). This could possibly be explained by the fact that current JavaScript engines have been extremely optimized since this technology is widely used on the web. This still looks surprising since Java is a compiled language while JS is not.
 
 <center><img src = "./img/convolve/bench_times_convolve.png" width=600> </img></center>
 
@@ -201,6 +204,10 @@ We performed some comparisons with benchmark realized during the previous step o
 Through this work, we were able to study the different process used for 2D filtering. The final goal was to implement these filters in JS using the `times` API. 
 
 Since convolution is a process which can be parallelized, the next goal is to implement this process for GPU computing. We will then use the webGL technology and convert our different algorithms in order to use them with it.
+
+Some extra testing is still needed in order to spot possible errors, but the tests we realized were all a sucess and the results were all corrects.
+
+The implementation in webGL is now our main idea and we will focus on this to increase our time processing for the differents algorithms we used.
 
 ## References
 1. Rasband, W.S., ImageJ, U. S. National Institutes of Health, Bethesda, Maryland, USA, https://imagej.nih.gov/ij/, 1997-2016.
