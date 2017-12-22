@@ -202,6 +202,8 @@ The results we obtained are represented in the figure X
 <span style = "font-size:10px"><b>Figure X.</b> Representation of the benchmark for the mean filter of TIMES </span>
 <br/><br/>
 
+As for the benchmark on ImageJ the more large the image is, the more time processing increases. The time seems to be the same for all type of images, even if there is a variation between the type, it is too small to take into account. If we compare the two benchmarks (between ImageJ and TIMES), it appears there is not significant variations between the time processing of the two algorithms.
+
 
 ## 3. Discussion
 The several benchmarks performed allowed us to observe certain behaviors for the different plugins tested.
