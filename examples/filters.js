@@ -7,8 +7,8 @@ let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 let img = new T.Image("uint8", 360, 288);
 img.setPixels(new Uint8Array(boats_pixels));
 
-let convolved = convolve(kernelConvolve)(img);
-img.setPixels(convolved.pixelData);
+// let convolved = convolve(kernelConvolve)(img);
+// img.setPixels(convolved.pixelData);
 
 let win = new T.Window('Original Image uint8');
 let view = cpu.view(img.getRaster());
@@ -17,7 +17,7 @@ win.addView(view);
 win.addToDOM("workspace");
 
 let gpuEnv = gpu.getGraphicsContext('previewUint8')
-gpu.invert(img.getRaster(),gpuEnv);
+// gpu.invert(img.getRaster(),gpuEnv);
 gpuConvolve(kernelConvolve)(img.getRaster(), gpuEnv);
 
 
