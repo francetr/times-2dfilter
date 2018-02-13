@@ -1,34 +1,51 @@
 /*
-  Test for a uint8 image
+  Test for GPU
 */
+
 let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
 
 let img = new T.Image("uint8", 360, 288);
 img.setPixels(new Uint8Array(boats_pixels));
+
+let convolved = convolve(kernelConvolve)(img);
+img.setPixels(convolved.pixelData);
+
 let win = new T.Window('Original Image uint8');
 let view = cpu.view(img.getRaster());
+
 win.addView(view);
 win.addToDOM("workspace");
 
-let size = 5;
-let radius = size / 2.0
-let meanKernel = cpu.convolutionKernel(
-  cpu.KERNEL_CIRCLE,                        // Circular kernel
-  size,                                        // Circle contained in a squared kernel 5 x 5
-  radius,                                      // Radius
-  Array.from({length: size * size}).fill(1.0)      // Weights 1 for every cells (mean kernel)
-);
-console.log(meanKernel);
+let gpuEnv = gpu.getGraphicsContext('previewUint8')
+gpu.invert(img.getRaster(),gpuEnv);
+gpuConvolve(kernelConvolve)(img.getRaster(), gpuEnv);
 
 
-let img01 = new T.Image('uint8',360,288);
-img01.setPixels(new Uint8Array(boats_pixels));
-let boats_convolve = cpu.pipe(cpu.convolve(meanKernel, cpu.BORDER_REPEAT), cpu.view);
 
-let view01 = boats_convolve(img01.getRaster());
-let win01 = new T.Window('Convolve Test uint 8');
-win01.addView(view01);
-win01.addToDOM('workspace');
+/*
+  Test for a uint8 image
+*/
+// let kernelConvolve = "-1 -1 -1\n-1 8 -1\n-1 -1 -1";
+
+// let size = 5;
+// let radius = size / 2.0
+// let meanKernel = cpu.convolutionKernel(
+//   cpu.KERNEL_CIRCLE,                        // Circular kernel
+//   size,                                        // Circle contained in a squared kernel 5 x 5
+//   radius,                                      // Radius
+//   Array.from({length: size * size}).fill(1.0)      // Weights 1 for every cells (mean kernel)
+// );
+// console.log(meanKernel);
+
+
+// let img01 = new T.Image('uint8',360,288);
+// img01.setPixels(new Uint8Array(boats_pixels));
+// let boats_convolve = cpu.pipe(cpu.convolve(meanKernel, cpu.BORDER_REPEAT), cpu.view);
+
+// let view01 = boats_convolve(img01.getRaster());
+// let win01 = new T.Window('Convolve Test uint 8');
+// win01.addView(view01);
+// win01.addToDOM('workspace');
 //
 // let img02 = new T.Image('uint8',360,288);
 // let boats_mean = meanFilter(3)(img);
