@@ -16,9 +16,9 @@ let view = cpu.view(img.getRaster());
 win.addView(view);
 win.addToDOM("workspace");
 
-let gpuEnv = gpu.getGraphicsContext('previewUint8')
-// gpu.invert(img.getRaster(),gpuEnv);
-gpuConvolve(kernelConvolve)(img.getRaster(), gpuEnv);
+let gpuEnv = gpu.getGraphicsContext('preview')
+gpu.invert(img.getRaster(),gpuEnv);
+// gpuConvolve(kernelConvolve)(img.getRaster(), gpuEnv);
 
 
 
